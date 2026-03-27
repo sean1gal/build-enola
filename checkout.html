@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Get the System — Build Enola</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&display=swap" rel="stylesheet" />
+  <style>
+  :root{
+    --bg:#FAF7F2; --surface:#FFFFFF; --border:#DDD3C4; --border-hi:#C8B8A8;
+    --text:#1C1410; --dim:#6B5A50; --muted:#A8978C;
+    --accent:#B85C38; --accent-hi:#8C3E22; --accent-bg:#F5EBE4;
+    --green:#3A7A4C; --green-bg:rgba(58,122,76,.10); --green-border:rgba(58,122,76,.25);
+    --font:'Inter',system-ui,sans-serif;
+    --serif:'Cormorant Garamond',Georgia,serif;
+    --r:8px; --r-lg:14px;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{color-scheme:light;}
+  body{font-family:var(--font);background:var(--bg);color:var(--text);
+    min-height:100vh;-webkit-font-smoothing:antialiased;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:40px 20px;}
+
+  /* ── Header ── */
+  .co-header{width:100%;max-width:480px;display:flex;align-items:center;
+    justify-content:space-between;margin-bottom:40px;}
+  .co-logo{font-family:var(--serif);font-size:17px;font-weight:700;
+    text-decoration:none;color:var(--text);}
+  .co-logo span{color:var(--accent);}
+  .co-back{font-size:13px;color:var(--muted);text-decoration:none;
+    display:flex;align-items:center;gap:6px;}
+  .co-back:hover{color:var(--accent);}
+
+  /* ── Card ── */
+  .co-card{width:100%;max-width:480px;background:var(--surface);
+    border:1px solid var(--border);border-radius:var(--r-lg);
+    padding:36px 40px;display:flex;flex-direction:column;gap:28px;}
+  @media(max-width:520px){.co-card{padding:28px 24px;}}
+
+  /* ── Product summary ── */
+  .co-product{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;}
+  .co-product-info{display:flex;flex-direction:column;gap:6px;}
+  .co-product-name{font-family:var(--serif);font-size:22px;font-weight:700;line-height:1.2;}
+  .co-product-desc{font-size:13px;color:var(--dim);line-height:1.5;}
+  .co-product-files{display:flex;flex-direction:column;gap:4px;margin-top:8px;}
+  .co-file-badge{font-size:11px;color:var(--dim);display:flex;align-items:center;gap:6px;}
+  .co-file-badge::before{content:'';width:5px;height:5px;border-radius:50%;
+    background:var(--accent);flex-shrink:0;}
+  .co-price-col{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+  .co-price{font-family:var(--serif);font-size:36px;font-weight:700;color:var(--text);
+    transition:all .3s;}
+  .co-price.free{color:var(--green);}
+  .co-price-was{font-size:14px;color:var(--muted);text-decoration:line-through;}
+  .co-price-label{font-size:11px;color:var(--muted);text-align:right;}
+
+  /* ── Divider ── */
+  .co-divider{border:none;border-top:1px solid var(--border);}
+
+  /* ── Promo ── */
+  .co-section-label{font-size:11px;font-weight:600;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+  .co-promo-row{display:flex;gap:8px;}
+  .co-input{font-family:var(--font);font-size:14px;padding:10px 14px;
+    border:1.5px solid var(--border);border-radius:var(--r);background:var(--bg);
+    color:var(--text);outline:none;width:100%;transition:border-color .2s;}
+  .co-input:focus{border-color:var(--accent);}
+  .co-input.valid{border-color:var(--green);}
+  .co-input.invalid{border-color:#B83030;}
+  .co-promo-btn{font-family:var(--font);font-size:13px;font-weight:600;
+    padding:10px 18px;border-radius:var(--r);border:1.5px solid var(--border);
+    background:var(--surface);color:var(--text);cursor:pointer;white-space:nowrap;
+    transition:all .2s;flex-shrink:0;}
+  .co-promo-btn:hover{border-color:var(--accent);color:var(--accent);}
+  .co-promo-msg{font-size:13px;margin-top:8px;min-height:18px;transition:all .2s;}
+  .co-promo-msg.success{color:var(--green);}
+  .co-promo-msg.error{color:#B83030;}
+
+  /* ── Email ── */
+  .co-email-wrap{display:flex;flex-direction:column;gap:8px;}
+
+  /* ── CTA ── */
+  .co-cta{display:flex;flex-direction:column;gap:10px;}
+  .co-btn-primary{font-family:var(--font);font-size:15px;font-weight:600;
+    padding:14px 24px;border-radius:var(--r);border:none;cursor:pointer;
+    background:var(--accent);color:#fff;transition:background .2s;text-align:center;}
+  .co-btn-primary:hover{background:var(--accent-hi);}
+  .co-btn-primary:disabled{opacity:.45;cursor:not-allowed;}
+  .co-btn-primary.free-mode{background:var(--green);}
+  .co-btn-primary.free-mode:hover{background:#2d6140;}
+  .co-btn-stripe{font-family:var(--font);font-size:14px;font-weight:500;
+    padding:12px 24px;border-radius:var(--r);border:1.5px solid var(--border);
+    background:none;color:var(--dim);cursor:pointer;transition:all .2s;text-align:center;
+    display:flex;align-items:center;justify-content:center;gap:8px;}
+  .co-btn-stripe:hover{border-color:var(--accent);color:var(--accent);}
+  .co-trust{font-size:12px;color:var(--muted);text-align:center;line-height:1.5;}
+
+  /* ── Success state ── */
+  .co-success{display:none;flex-direction:column;align-items:center;
+    text-align:center;gap:16px;padding:12px 0;}
+  .co-success.visible{display:flex;}
+  .co-success-icon{width:52px;height:52px;border-radius:50%;
+    background:var(--green-bg);border:2px solid var(--green-border);
+    display:flex;align-items:center;justify-content:center;font-size:24px;}
+  .co-success-title{font-family:var(--serif);font-size:26px;font-weight:700;}
+  .co-success-desc{font-size:14px;color:var(--dim);line-height:1.6;max-width:340px;}
+  .co-success-btn{font-family:var(--font);font-size:15px;font-weight:600;
+    padding:14px 32px;border-radius:var(--r);border:none;cursor:pointer;
+    background:var(--green);color:#fff;text-decoration:none;
+    transition:background .2s;}
+  .co-success-btn:hover{background:#2d6140;}
+
+  /* ── Footer ── */
+  .co-footer{margin-top:32px;font-size:12px;color:var(--muted);text-align:center;}
+  </style>
+</head>
+<body>
+
+<div class="co-header">
+  <a href="index.html" class="co-logo">Build <span>Enola</span></a>
+  <a href="index.html" class="co-back">← Back</a>
+</div>
+
+<!-- Main card -->
+<div class="co-card" id="checkout-card">
+
+  <!-- Product summary -->
+  <div class="co-product">
+    <div class="co-product-info">
+      <div class="co-product-name">Build Enola<br>Agent System</div>
+      <div class="co-product-desc">A 7-division AI team. Built around you.</div>
+      <div class="co-product-files">
+        <div class="co-file-badge">Soul Builder — build your CEO agent</div>
+        <div class="co-file-badge">7 agents × 6 files — complete team</div>
+        <div class="co-file-badge">CLAUDE.md + START.md included</div>
+        <div class="co-file-badge">Works with Claude Code (free)</div>
+      </div>
+    </div>
+    <div class="co-price-col">
+      <div class="co-price" id="price-display">$49</div>
+      <div class="co-price-was" id="price-was" style="display:none">$49</div>
+      <div class="co-price-label">one payment</div>
+    </div>
+  </div>
+
+  <hr class="co-divider" />
+
+  <!-- Promo code -->
+  <div>
+    <div class="co-section-label">Promo code</div>
+    <div class="co-promo-row">
+      <input type="text" class="co-input" id="promo-input"
+        placeholder="Enter your code…"
+        oninput="this.value=this.value.toUpperCase()"
+        onkeydown="if(event.key==='Enter')applyPromo()" />
+      <button class="co-promo-btn" onclick="applyPromo()">Apply</button>
+    </div>
+    <div class="co-promo-msg" id="promo-msg"></div>
+  </div>
+
+  <hr class="co-divider" />
+
+  <!-- Email -->
+  <div class="co-email-wrap">
+    <div class="co-section-label">Your email</div>
+    <input type="email" class="co-input" id="email-input"
+      placeholder="you@yourdomain.com" />
+  </div>
+
+  <!-- CTA -->
+  <div class="co-cta">
+    <button class="co-btn-primary" id="main-cta" onclick="handleCTA()">
+      Get the System · $49
+    </button>
+    <div class="co-trust" id="trust-line">
+      One payment. No subscription. 14-day refund if it doesn't work for you.
+    </div>
+  </div>
+
+</div>
+
+<!-- Success state -->
+<div class="co-card co-success" id="success-card">
+  <div class="co-success-icon">✓</div>
+  <div class="co-success-title">You're in.</div>
+  <div class="co-success-desc">
+    Your Soul Builder is ready. Build your CEO agent, generate your team, and download all 42 files.
+  </div>
+  <a href="soul-builder/index.html" class="co-success-btn">
+    Start building →
+  </a>
+  <div class="co-trust" style="margin-top:8px">
+    Your email has been noted. We'll send updates when new builders launch.
+  </div>
+</div>
+
+<div class="co-footer">
+  &copy; Sean Gal | enolarevenu.com &mdash; Your completed content is your own.
+</div>
+
+<script>
+// ── Beta promo codes ──
+// Note: for production, validate server-side via Supabase or Stripe coupons
+const VALID_CODES = {
+  'BETA2026':   {type:'beta',   label:'Beta access — welcome.'},
+  'FOUNDING24': {type:'beta',   label:'Founding member — thank you.'},
+  'BUILDTEAM':  {type:'beta',   label:'Team access granted.'},
+  'ENOLA100':   {type:'beta',   label:'Full access granted.'},
+};
+
+let promoApplied = false;
+let validCode    = null;
+
+function applyPromo(){
+  const input = document.getElementById('promo-input');
+  const msg   = document.getElementById('promo-msg');
+  const code  = input.value.trim().toUpperCase();
+
+  if(!code){
+    msg.textContent = 'Enter a code first.';
+    msg.className = 'co-promo-msg error';
+    return;
+  }
+
+  if(VALID_CODES[code]){
+    validCode    = code;
+    promoApplied = true;
+    const info   = VALID_CODES[code];
+
+    // Update UI
+    input.classList.add('valid');
+    input.classList.remove('invalid');
+    msg.textContent  = '✓ ' + info.label;
+    msg.className    = 'co-promo-msg success';
+
+    // Price to free
+    const priceEl = document.getElementById('price-display');
+    const wasEl   = document.getElementById('price-was');
+    priceEl.textContent = 'Free';
+    priceEl.classList.add('free');
+    wasEl.style.display = 'block';
+
+    // CTA update
+    const cta = document.getElementById('main-cta');
+    cta.textContent = 'Get access — free →';
+    cta.classList.add('free-mode');
+
+    // Trust line
+    document.getElementById('trust-line').textContent =
+      '100% free. No card required. Beta tester access.';
+
+  } else {
+    input.classList.add('invalid');
+    input.classList.remove('valid');
+    msg.textContent = 'Code not recognised. Check for typos.';
+    msg.className   = 'co-promo-msg error';
+    promoApplied    = false;
+    validCode       = null;
+  }
+}
+
+function handleCTA(){
+  const email = document.getElementById('email-input').value.trim();
+
+  if(!email || !email.includes('@')){
+    document.getElementById('email-input').focus();
+    document.getElementById('email-input').style.borderColor = '#B83030';
+    setTimeout(()=>document.getElementById('email-input').style.borderColor='',1500);
+    return;
+  }
+
+  if(promoApplied){
+    // Store access flag for this session
+    sessionStorage.setItem('enola_access', 'beta');
+    sessionStorage.setItem('enola_email', email);
+    sessionStorage.setItem('enola_code', validCode);
+
+    // Show success
+    document.getElementById('checkout-card').style.display = 'none';
+    document.getElementById('success-card').classList.add('visible');
+    window.scrollTo(0, 0);
+  } else {
+    // Stripe — wire when ready
+    alert('Stripe payment coming soon. Use a beta code for now, or email hello@enolarevenu.com for access.');
+  }
+}
+
+// Allow Enter on email field
+document.addEventListener('DOMContentLoaded', ()=>{
+  document.getElementById('email-input').addEventListener('keydown', e=>{
+    if(e.key === 'Enter') handleCTA();
+  });
+});
+</script>
+
+</body>
+</html>
