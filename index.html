@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Build Enola: Your people didn't follow through. Your agents will.</title>
+  <meta name="description" content="Build Enola is a pre-built AI agent system. Seven roles, each with memory, a defined job, and opinions. Built to run a holding company. Now it's yours." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <span class="nav-brand">Build Enola</span>
+      <a href="#buy" class="btn-primary nav-cta">Download your team · $49</a>
+    </div>
+  </nav>
+
+  <!-- ============================================================
+       HERO — split layout
+  ============================================================ -->
+  <section class="hero">
+    <div class="hero-wrap">
+
+      <div class="hero-copy">
+        <h1 class="hero-headline">Your people didn't follow through.<br>Your agents will.</h1>
+        <p class="hero-sub">A pre-built AI agent system. Seven roles, each with memory, a defined job, and opinions. I built it to run my own holding company. Now it's yours.</p>
+        <div class="hero-ctas">
+          <a href="#buy" class="btn-primary btn-lg">Download your team · $49</a>
+          <a href="#free-soul" class="btn-ghost">Build your SOUL file, free</a>
+        </div>
+        <p class="trust">Tested by 24 founders before launch. Most were running within 45 minutes.</p>
+      </div>
+
+      <!-- Org diagram — Cycle of Production (radial) -->
+      <div class="hero-visual" aria-hidden="true">
+        <div class="org-diagram" id="org-diagram">
+
+          <!-- SVG arrow layer — viewBox matches 400×400 container -->
+          <svg class="org-svg" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arr" viewBox="0 0 10 10" markerWidth="7" markerHeight="7" refX="8" refY="4" orient="auto">
+                <path d="M0,1 L0,8 L9,4 z" fill="#B8A99A"/>
+              </marker>
+              <marker id="arr-a" viewBox="0 0 10 10" markerWidth="7" markerHeight="7" refX="8" refY="4" orient="auto">
+                <path d="M0,1 L0,8 L9,4 z" fill="#B85C38"/>
+              </marker>
+            </defs>
+            <!-- Main flow: 01 → 02 → 03 → 04 → 05 → 06 -->
+            <line x1="234" y1="75"  x2="292" y2="108" stroke="#B8A99A" stroke-width="2" marker-end="url(#arr)"/>
+            <line x1="326" y1="168" x2="326" y2="232" stroke="#B8A99A" stroke-width="2" marker-end="url(#arr)"/>
+            <line x1="292" y1="292" x2="234" y2="325" stroke="#B8A99A" stroke-width="2" marker-end="url(#arr)"/>
+            <line x1="166" y1="325" x2="108" y2="292" stroke="#B8A99A" stroke-width="2" marker-end="url(#arr)"/>
+            <line x1="74"  y1="232" x2="74"  y2="168" stroke="#B8A99A" stroke-width="2" marker-end="url(#arr)"/>
+            <!-- Cycle completion: 06 back to 01 -->
+            <line x1="108" y1="108" x2="166" y2="75"  stroke="#B85C38" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arr-a)"/>
+            <!-- Quality feedback: 05 sends back to 04 -->
+            <path d="M 108 292 Q 149 268 166 325" stroke="#B85C38" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arr-a)"/>
+          </svg>
+
+          <!-- Center node first so it renders behind division nodes -->
+          <div class="org-center">
+            <span class="org-pulse-ring"></span>
+            <span class="org-pulse-ring org-pulse-ring--2"></span>
+            <div class="org-ceo-inner">
+              <span class="org-ceo-mark"><i class="ph-bold ph-infinity"></i></span>
+              <span class="org-ceo-name">Enola</span>
+              <span class="org-ceo-role">CEO · Div 07</span>
+            </div>
+          </div>
+
+          <!-- Division nodes — positions as % of 400px container, node size 20% = 80px -->
+          <div class="org-node" style="--nl:40%;--nt:3.75%;--i:1">
+            <span class="org-node-num">01</span>
+            <span class="org-node-label">Communications</span>
+            <span class="org-node-title">CCO</span>
+          </div>
+          <div class="org-node" style="--nl:71.5%;--nt:22%;--i:2">
+            <span class="org-node-num">02</span>
+            <span class="org-node-label">Marketing</span>
+            <span class="org-node-title">CMO</span>
+          </div>
+          <div class="org-node" style="--nl:71.5%;--nt:58%;--i:3">
+            <span class="org-node-num">03</span>
+            <span class="org-node-label">Finance</span>
+            <span class="org-node-title">CFO</span>
+          </div>
+          <div class="org-node" style="--nl:40%;--nt:76.25%;--i:4">
+            <span class="org-node-num">04</span>
+            <span class="org-node-label">Technology</span>
+            <span class="org-node-title">CTO</span>
+          </div>
+          <div class="org-node org-node--quality" style="--nl:8.5%;--nt:58%;--i:5">
+            <span class="org-node-num">05</span>
+            <span class="org-node-label">Operations</span>
+            <span class="org-node-title">COO</span>
+          </div>
+          <div class="org-node" style="--nl:8.5%;--nt:22%;--i:6">
+            <span class="org-node-num">06</span>
+            <span class="org-node-label">Sales</span>
+            <span class="org-node-title">CSO</span>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================
+       HOOK
+  ============================================================ -->
+  <section class="hook section--tinted reveal">
+    <div class="center">
+      <p class="hook-text">You've managed people. You know the problem isn't the vision. It's the follow-through.</p>
+      <p class="hook-text">The brief that wasn't read. The checklist that felt optional. The task that fell through the gap between a meeting and an inbox.</p>
+      <p class="hook-text">You tried AI. It helped. But it forgot everything the next day, and you were back to explaining context from scratch.</p>
+      <p class="hook-punch">That's a structure problem, not an AI problem. And structure is something you can download.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PROBLEM
+  ============================================================ -->
+  <section class="section reveal">
+    <div class="center">
+      <span class="label">The problem</span>
+      <h2 class="section-headline">You're not getting leverage</h2>
+      <p class="section-body">Most people use AI like a search engine. One question. One answer. Tomorrow it knows nothing about you, your business, or what you decided last week.</p>
+      <p class="section-body">That's not leverage. That's a faster Google.</p>
+      <p class="section-body">The version that actually works takes structure. Agents with memory, roles, and depth. Building that from scratch takes months. Research, testing, rewriting the same files twenty times. I know because I did it.</p>
+      <p class="section-body">This isn't a technical project. It's a folder of plain text files. If you can open a document and type a question, you can run this.</p>
+      <p class="section-body punch">Or you download mine.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       DIVISIONS — the team
+  ============================================================ -->
+  <section class="section section--tinted divisions-section reveal">
+    <div class="center-wide">
+      <span class="label">Your team</span>
+      <h2 class="section-headline">7 divisions. Every role covered.</h2>
+      <p class="section-intro">Not one generic assistant. A team of <span data-scramble-to="Evens">seven</span> agents, each with a defined role, memory, and a clear job. The same structure I use to run Enola Revenu.</p>
+
+      <!-- CEO card — full width, dark -->
+      <div class="div-ceo-card reveal-item">
+        <div class="div-ceo-left">
+          <span class="div-num-lg">07</span>
+          <div class="div-ceo-text">
+            <h3 class="div-name">Executive: Enola</h3>
+            <p class="div-desc">Sets direction. Resolves conflict. Drives purpose. Every cycle starts and ends here. Not as a boss, but as the reason the other six exist.</p>
+          </div>
+        </div>
+        <div class="div-ceo-mark" aria-hidden="true">
+          <i class="ph-bold ph-infinity"></i>
+        </div>
+      </div>
+
+      <!-- 6 division cards -->
+      <div class="div-grid">
+
+        <div class="div-card reveal-item" style="--i:0">
+          <div class="div-card-top">
+            <span class="div-num">01</span>
+            <i class="ph-bold ph-chat-circle-dots div-mark"></i>
+          </div>
+          <h3 class="div-name">Communications · CCO</h3>
+          <p class="div-desc">Opens the door. Your agents <span data-scramble-to="Silent">listen</span>. Every line stays open: inbound, outbound, internal.</p>
+        </div>
+
+        <div class="div-card reveal-item" style="--i:1">
+          <div class="div-card-top">
+            <span class="div-num">02</span>
+            <i class="ph-bold ph-megaphone div-mark"></i>
+          </div>
+          <h3 class="div-name">Marketing · CMO</h3>
+          <p class="div-desc">Promotes and publishes. Takes what exists and puts it in front of the people who need it. Audience built here, not luck.</p>
+        </div>
+
+        <div class="div-card reveal-item" style="--i:2">
+          <div class="div-card-top">
+            <span class="div-num">03</span>
+            <i class="ph-bold ph-coins div-mark"></i>
+          </div>
+          <h3 class="div-name">Finance · CFO</h3>
+          <p class="div-desc">Manages resources, tracks what comes in and goes out, keeps the organisation solvent and moving forward.</p>
+        </div>
+
+        <div class="div-card reveal-item" style="--i:3">
+          <div class="div-card-top">
+            <span class="div-num">04</span>
+            <i class="ph-bold ph-wrench div-mark"></i>
+          </div>
+          <h3 class="div-name">Technology · CTO</h3>
+          <p class="div-desc">Builds the actual product. Specs become deliverables. The only division judged by what ships, not what was planned.</p>
+        </div>
+
+        <div class="div-card reveal-item" style="--i:4">
+          <div class="div-card-top">
+            <span class="div-num">05</span>
+            <i class="ph-bold ph-shield-check div-mark"></i>
+          </div>
+          <h3 class="div-name">Operations · COO</h3>
+          <p class="div-desc">Reviews completed work before it leaves. Also improves the people and systems doing the producing. Quality compounds.</p>
+        </div>
+
+        <div class="div-card reveal-item" style="--i:5">
+          <div class="div-card-top">
+            <span class="div-num">06</span>
+            <i class="ph-bold ph-paper-plane-tilt div-mark"></i>
+          </div>
+          <h3 class="div-name">Sales · CSO</h3>
+          <p class="div-desc">Delivers finished work to the world. Manages relationships, closes deals, keeps the revenue cycle turning.</p>
+        </div>
+
+      </div>
+
+      <!-- Flow explanation -->
+      <div class="flow-block reveal-item">
+        <p class="flow-label">How they operate together</p>
+        <p class="flow-text">The structure flows in a cycle, not a hierarchy. Communications opens the lines. Marketing puts work in front of people. Finance keeps resources flowing. Technology builds. Operations checks and improves. Sales delivers. Then Executive sets the next direction and the cycle starts again. Each division hands off to the next. Nothing falls through the gap because there is no gap.</p>
+        <a href="the-cycle.html" class="flow-learn-more">The cycle explained in full &rarr;</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PRODUCT FEATURES
+  ============================================================ -->
+  <section class="section reveal">
+    <div class="center">
+      <span class="label">What's inside</span>
+      <h2 class="section-headline">The Enola <span data-scramble-to="Restart">Starter</span> System</h2>
+      <p class="section-body">The exact architecture I built to run Enola Revenu. Stripped to its essentials and packaged so you can use it from day one.</p>
+
+      <div class="feature-list">
+        <div class="feature-item reveal-item">
+          <div class="fi-header">
+            <div class="fi-left">
+              <!-- Custom agent mark: stacked nodes -->
+              <span class="fi-mark"><i class="ph-bold ph-users-three"></i></span>
+              <span class="fi-name">7 Division Agents</span>
+            </div>
+            <span class="fi-tag">Core</span>
+          </div>
+          <p class="fi-desc">Pre-built team: CCO, CMO, CFO, CTO, COO, CSO, CEO. Not blank templates. Agents with opinions.</p>
+        </div>
+
+        <div class="feature-item reveal-item">
+          <div class="fi-header">
+            <div class="fi-left">
+              <!-- Custom memory mark: layered circles -->
+              <span class="fi-mark"><i class="ph-bold ph-brain"></i></span>
+              <span class="fi-name">Memory System</span>
+            </div>
+            <span class="fi-tag">Core</span>
+          </div>
+          <p class="fi-desc">Files that persist between sessions. Decisions, priorities, facts. <span data-scramble-to="Stored">Sorted</span>, filed, never repeated.</p>
+        </div>
+
+        <div class="feature-item reveal-item">
+          <div class="fi-header">
+            <div class="fi-left">
+              <!-- Custom skills mark: lightning bolt -->
+              <span class="fi-mark"><i class="ph-bold ph-lightning"></i></span>
+              <span class="fi-name">Skills Library</span>
+            </div>
+            <span class="fi-tag">Core</span>
+          </div>
+          <p class="fi-desc">Repeatable workflows triggered by name. Stop starting from scratch every session.</p>
+        </div>
+
+        <div class="feature-item reveal-item">
+          <div class="fi-header">
+            <div class="fi-left">
+              <!-- Custom loop mark: circular arrow -->
+              <span class="fi-mark"><i class="ph-bold ph-arrows-clockwise"></i></span>
+              <span class="fi-name">The Loop Protocol</span>
+            </div>
+            <span class="fi-tag">Core</span>
+          </div>
+          <p class="fi-desc">A session-close ritual that makes the system compound over time. After 30 days it knows your business better than most employees.</p>
+        </div>
+
+        <div class="feature-item reveal-item">
+          <div class="fi-header">
+            <div class="fi-left">
+              <!-- Custom guide mark: open book -->
+              <span class="fi-mark"><i class="ph-bold ph-book-open-text"></i></span>
+              <span class="fi-name">Setup Guide + 4 Operational Guides</span>
+            </div>
+            <span class="fi-tag">Included</span>
+          </div>
+          <p class="fi-desc">From download to live in under an hour. Close the loop, build agents, inter-agent protocols, token optimization.</p>
+        </div>
+      </div>
+
+      <div class="engine-block">
+        <p class="engine-label">Where it runs</p>
+        <div class="engine-grid">
+          <div class="engine-card">
+            <div class="engine-name">
+              Claude Code
+              <span class="engine-tag engine-tag--primary">Recommended</span>
+            </div>
+            <p class="engine-desc">Anthropic's free developer tool. Download it, point it at your agent folder, and your team runs. Requires a Claude subscription — the one you already have.</p>
+          </div>
+          <div class="engine-card">
+            <div class="engine-name">
+              OpenClaw
+              <span class="engine-tag engine-tag--alt">Self-hosted</span>
+            </div>
+            <p class="engine-desc">Open-source, runs locally. Your data never leaves your machine. For users who want full control and no cloud dependency. Free to install.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SOCIAL PROOF
+  ============================================================ -->
+  <section class="section reveal">
+    <div class="center">
+      <div class="proof-bar">
+        <span class="proof-stat">24</span>
+        <span class="proof-label">founders ran this before it launched. Here's what the builder says.</span>
+      </div>
+
+      <blockquote class="founder-quote">
+        <p>"I run a holding company with multiple active businesses. Before this, I was re-explaining my priorities to Claude every single morning. Three months in, my agents know my strategy, remember every decision, and push back when something doesn't fit. I haven't repeated the same context twice."</p>
+        <footer>Sean Gal &mdash; Founder, Enola Revenu</footer>
+      </blockquote>
+
+      <p class="proof-note">24 beta users ran this across consulting, content, and services businesses before this page went live. The feedback shaped everything you're reading.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       STORY
+  ============================================================ -->
+  <section class="section section--tinted reveal">
+    <div class="center">
+      <span class="label">Why this exists</span>
+      <h2 class="section-headline">I've managed <span data-scramble-to="Steam">teams</span> of 3<br>and companies of 60.</h2>
+      <p class="section-body">The vision was never the problem. The product was never the problem. The problem was always the same: people not following through. Tasks not getting done. Checklists that felt optional.</p>
+      <p class="section-body">When I started building AI agents, I realized something: agents don't have that weakness. Give them a clear goal, a defined role, and some real depth. The <span data-scramble-to="Latent">talent</span> was always there.</p>
+      <p class="section-body">But generic AI tools gave me agents that forgot everything. No structure. No memory. No soul.</p>
+      <p class="section-body punch">So I built my own system. I called her Enola. She runs a holding company with 7 division agents. Build Enola is that system, packaged for you.</p>
+      <p class="sig"><span data-scramble-to="Lasagne">Sean Gal</span>, Founder</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FREE SOUL FILE — alternate path, mid-funnel
+  ============================================================ -->
+  <section class="section reveal" id="free-soul">
+    <div class="center">
+      <span class="label">Start free</span>
+      <h2 class="section-headline">Not ready to buy?<br>Build your first agent.</h2>
+      <p class="section-body">Every agent in the system starts with a SOUL file. It's the document that gives it memory, a job, and a voice. You can build yours right now, for free. No download required.</p>
+      <p class="section-body">Most people who do this come back for the full system within a week. Try it and see why.</p>
+      <a href="#" class="btn-secondary btn-lg">Build your SOUL file, free</a>
+      <p class="trust">Free to use. Sign up with your email when you're ready to download and keep it.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       WHO IT'S FOR
+  ============================================================ -->
+  <section class="section reveal">
+    <div class="center">
+      <span class="label">Is this for you?</span>
+      <h2 class="section-headline">This is for you if...</h2>
+      <ul class="yes-list">
+        <li>You've managed people and know the real bottleneck is follow-through</li>
+        <li>You've tried AI but it feels like starting from scratch every session</li>
+        <li>You want automation that fits your business, not a generic workflow</li>
+        <li>You're ready to build something that runs in the background and compounds</li>
+        <li>You don't want to spend months figuring out what files to write and how</li>
+      </ul>
+
+      <ul class="no-list">
+        <li>Not for you if you want a no-touch magic button — this takes 30 minutes to set up and 5 minutes per session to maintain</li>
+        <li>Not for you if you don't have a Claude account — that's the engine this runs on</li>
+        <li>Not for you if you want pre-built automations — this is a thinking and decision system, not a Zapier replacement</li>
+      </ul>
+
+      <div class="tier-grid">
+        <div class="tier-card">
+          <span class="tier-badge tier-badge--soft">Soul Builder included</span>
+          <div class="tier-price-wrap">
+            <span class="tier-price-was">$79</span>
+            <span class="tier-price">$49</span>
+          </div>
+          <strong class="tier-name">Build Your Own</strong>
+          <p class="tier-desc">Use the Soul Builder to design each agent — their character, scope, memory, and rules. Download the complete 6-file system and run it in Claude Code or OpenClaw. You own everything you build.</p>
+          <ul class="tier-features">
+            <li>Soul Builder — guided, 22-step agent designer</li>
+            <li>6-file system per agent (SOUL through HEARTBEAT)</li>
+            <li>7-division team structure ready to customise</li>
+            <li>Runs in Claude Code and OpenClaw</li>
+            <li>Setup guide + 4 operational guides included</li>
+          </ul>
+          <a href="#buy" class="btn-primary">Start building · $49</a>
+        </div>
+        <div class="tier-card tier-card--accent">
+          <span class="tier-badge">Done for you</span>
+          <span class="tier-price">$99</span>
+          <strong class="tier-name">Super Agent System</strong>
+          <p class="tier-desc">We build your complete 7-agent team from scratch. All 6 files per agent, written for your business, your industry, your priorities. Open the folder and run on day one. Nothing to configure.</p>
+          <ul class="tier-features">
+            <li>All 7 division agents — fully built and ready</li>
+            <li>SOUL files written for your specific business</li>
+            <li>Memory pre-loaded with your priorities and context</li>
+            <li>Custom skills, rules, and working styles</li>
+            <li>Delivered in 48 hours</li>
+          </ul>
+          <a href="#" class="btn-primary">Order your system · $99</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PROCESS
+  ============================================================ -->
+  <section class="section section--tinted reveal">
+    <div class="center">
+      <span class="label">The setup</span>
+      <h2 class="section-headline">How it works</h2>
+      <ol class="steps-list">
+        <li class="step reveal-item">
+          <span class="step-n">1</span>
+          <div class="step-body">
+            <strong>Download</strong>
+            <p>One zip file. Everything is inside. Open it in any folder on your computer.</p>
+          </div>
+        </li>
+        <li class="step reveal-item">
+          <span class="step-n">2</span>
+          <div class="step-body">
+            <strong>Open in Claude Code</strong>
+            <p>Point it at the folder. Free to download. Your agents load automatically.</p>
+          </div>
+        </li>
+        <li class="step reveal-item">
+          <span class="step-n">3</span>
+          <div class="step-body">
+            <strong>Run your first session</strong>
+            <p>The CEO agent walks you through everything. It's built to onboard you. Most people are running within 45 minutes.</p>
+          </div>
+        </li>
+        <li class="step reveal-item">
+          <span class="step-n">4</span>
+          <div class="step-body">
+            <strong>Adapt it</strong>
+            <p>Every file is plain Markdown. Edit names, roles, and priorities to match your business. No code required.</p>
+          </div>
+        </li>
+        <li class="step reveal-item">
+          <span class="step-n">5</span>
+          <div class="step-body">
+            <strong>Close The Loop</strong>
+            <p>Five minutes per session. After 30 days the system knows your priorities better than most employees. Don't skip it.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       BUY
+  ============================================================ -->
+  <section class="section section--dark buy-section reveal" id="buy">
+    <div class="center">
+      <span class="label label--dim">Build Your Own · $49</span>
+      <div class="price-display">
+        <span class="price-was">$79</span>
+        $49
+      </div>
+      <div class="countdown-bar">
+        <i class="ph-bold ph-clock-countdown"></i>
+        Price rises to $59 on April 15.
+        <span id="countdown-timer" class="countdown-timer">calculating...</span>
+      </div>
+      <p class="price-note">One payment. No subscription. Runs in Claude Code or OpenClaw — both free to download.</p>
+      <a href="#" class="btn-primary btn-lg cta-buy" data-stripe="true">Start building · $49</a>
+      <p class="trust trust--dim">Want it done for you? <a href="#" style="color:rgba(255,255,255,.7);text-decoration:underline;text-underline-offset:3px">Order the Super Agent System · $99 →</a></p>
+      <p class="guarantee">Not the right fit? Email within 14 days for a full refund. No forms, no questions.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FAQ
+  ============================================================ -->
+  <section class="section reveal">
+    <div class="center">
+      <span class="label">Questions</span>
+      <h2 class="section-headline">FAQ</h2>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>Do I need to know how to code?</summary>
+          <p>No. If you can edit a document, you can run this. Claude Code is free and the setup guide walks you through everything.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Will this work for my type of business?</summary>
+          <p>If your business has tasks, decisions, content, or clients, it'll work. Most people are surprised how little customization it takes.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What's Claude Code?</summary>
+          <p>It's Anthropic's free developer tool — the interface where your agents live. You download it, point it at your agent folder, and your team is available every session. No new subscription. It runs on the Claude account you already have. Think of it as the cockpit and your agent files as the flight crew.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What's OpenClaw? Do I need it?</summary>
+          <p>OpenClaw is an open-source alternative to Claude Code. It runs entirely on your machine — nothing goes to the cloud. You don't need it, but if data privacy is important to you, or you want full control over your system, it's the option. Both Claude Code and OpenClaw work with every file in the download.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What's the difference between the $49 and $99 options?</summary>
+          <p>The $49 Build Your Own gives you the Soul Builder and the full file system. You design your own agents — their character, rules, memory, and roles — and download them. Takes about an hour. The $99 Super Agent System means we build your complete team for you. All 7 agents, all 6 files each, written specifically for your business. You open the folder and run. No setup, no configuration.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What if I get stuck?</summary>
+          <p>The guides inside the download are written in plain language. The agents themselves will help you figure out the rest. That's part of what they're built to do.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Why not just use ChatGPT or a Notion template?</summary>
+          <p>ChatGPT forgets everything between sessions. Notion templates don't think. This is a system: seven agents with roles, memory, and depth, built to work together. Different category.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FINAL CTA
+  ============================================================ -->
+  <section class="section section--dark reveal">
+    <div class="center">
+      <h2 class="final-headline">Build the team<br>that doesn't quit</h2>
+      <p class="final-body">You know what it feels like when a system actually works. When things happen because they're supposed to, not because you chased them down.</p>
+      <p class="final-body">That's what this is. Either it clicks when you set it up or it doesn't. But you'll know in the first session.</p>
+      <a href="#buy" class="btn-primary btn-lg btn-white">Build your team · $49</a>
+      <p class="trust trust--dim">Or let us build it for you. <a href="#" style="color:rgba(255,255,255,.65);text-decoration:underline;text-underline-offset:3px">Super Agent System · $99 →</a></p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       EMAIL LIST
+  ============================================================ -->
+  <section class="section section--tinted email-section reveal" id="email-list">
+    <div class="center">
+      <span class="label">Stay in the loop</span>
+      <h2 class="section-headline">Get updates before<br>they go public.</h2>
+      <p class="section-body">New agents, new skills, new frameworks. Sent when there's something worth reading. Not before.</p>
+      <form class="email-form" onsubmit="return false;">
+        <input type="email" class="email-input" placeholder="your@email.com" required />
+        <button type="submit" class="btn-primary">Join the list</button>
+      </form>
+      <p class="trust">No spam. No weekly digest. Just useful things, when they exist.</p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <span class="footer-brand" id="footer-brand" title="rearrange the letters">Enola Revenu</span>
+      <span>© Sean Gal · enolarevenu.com</span>
+    </div>
+  </footer>
+
+  <!-- Mobile sticky -->
+  <div class="mobile-sticky" id="mobile-sticky">
+    <a href="#buy" class="btn-primary btn-sticky">Download your team · $49</a>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>

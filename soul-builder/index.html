@@ -1,0 +1,2770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light" />
+  <title>Soul Builder — Build Enola</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <style>
+  :root {
+    --bg:#FAF7F2; --surface:#FFFFFF; --raised:#F2EBE0;
+    --border:#DDD3C4; --border-hi:#C8B8A8;
+    --text:#1C1410; --dim:#6B5A50; --muted:#A8978C;
+    --accent:#B85C38; --accent-hi:#8C3E22; --accent-bg:#F5EBE4;
+    --green:#3A7A4C; --green-bg:rgba(58,122,76,.10);
+    --red:#B83030; --red-bg:rgba(184,48,48,.10);
+    --font:'Inter',system-ui,sans-serif;
+    --serif:'Cormorant Garamond',Georgia,serif;
+    --mono:'JetBrains Mono',monospace;
+    --r:8px; --r-lg:14px; --hh:56px; --pw:3px;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{color-scheme:light;scroll-behavior:smooth;}
+  body{font-family:var(--font);background:var(--bg);color:var(--text);
+    line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden;}
+  a{color:inherit;text-decoration:none;}
+  button{font-family:var(--font);cursor:pointer;border:none;background:none;}
+
+  /* ── Header ── */
+  .sb-header{position:fixed;top:0;left:0;right:0;height:var(--hh);
+    background:var(--surface);border-bottom:1px solid var(--border);
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 24px;z-index:200;}
+  .sb-logo{font-family:var(--serif);font-size:17px;font-weight:700;}
+  .sb-logo span{color:var(--accent);}
+  .sb-step-info{font-size:11px;color:var(--muted);font-weight:600;
+    letter-spacing:.06em;text-transform:uppercase;}
+  .sb-file-tag{font-family:var(--mono);font-size:11px;color:var(--accent);
+    background:var(--accent-bg);border:1px solid rgba(184,92,56,.2);
+    padding:3px 8px;border-radius:4px;}
+
+  /* ── Progress ── */
+  .sb-progress{position:fixed;top:var(--hh);left:0;right:0;height:var(--pw);
+    background:var(--border);z-index:199;}
+  .sb-progress-fill{height:100%;background:var(--accent);transition:width 380ms ease;width:0%;}
+
+  /* ── Layout ── */
+  .sb-layout{display:flex;min-height:100vh;padding-top:calc(var(--hh) + var(--pw));}
+  .sb-form-area{flex:1;padding:48px 44px 100px;min-width:0;}
+  .sb-resizer{width:5px;cursor:col-resize;background:var(--border);
+    transition:background 150ms;flex-shrink:0;position:relative;}
+  .sb-resizer:hover,.sb-resizer.dragging{background:var(--accent);}
+  .sb-resizer::after{content:'';position:absolute;top:50%;left:50%;
+    transform:translate(-50%,-50%);width:1px;height:40px;
+    background:var(--border-hi);border-radius:2px;}
+  .sb-preview{width:340px;min-width:220px;max-width:600px;flex-shrink:0;
+    position:sticky;top:calc(var(--hh)+var(--pw));
+    height:calc(100vh - var(--hh) - var(--pw));
+    border-left:1px solid var(--border);overflow-y:auto;background:var(--raised);}
+
+  /* ── Screen ── */
+  .sb-screen{display:none;}
+  .sb-screen.active{display:block;animation:fadeUp 280ms ease;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+  .step-eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--accent);margin-bottom:10px;}
+  .step-title{font-family:var(--serif);font-size:38px;font-weight:700;
+    color:var(--text);line-height:1.1;margin-bottom:8px;}
+  .step-desc{font-size:17px;color:var(--dim);line-height:1.65;margin-bottom:28px;}
+
+  /* ── Start hero ── */
+  .start-hero{margin-bottom:36px;}
+  .start-hero-title{font-family:var(--serif);font-size:56px;font-weight:700;
+    color:var(--text);line-height:1.05;}
+  .start-hero-title span{color:var(--accent);}
+  .start-sub{font-size:16px;color:var(--dim);margin-top:14px;line-height:1.65;max-width:520px;}
+  .owner-intro{background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--r-lg);padding:20px 22px;margin-bottom:24px;}
+  .owner-intro-title{font-size:16px;font-weight:600;color:var(--text);margin-bottom:14px;}
+
+  /* ── Form ── */
+  .form-group{margin-bottom:18px;}
+  .form-label{font-size:11px;font-weight:600;color:var(--dim);text-transform:uppercase;
+    letter-spacing:.07em;display:block;margin-bottom:5px;}
+  .form-input,.form-textarea{width:100%;padding:11px 13px;border:1px solid var(--border);
+    border-radius:var(--r);background:var(--surface);color:var(--text);
+    font-family:var(--font);font-size:16px;transition:border-color 160ms;outline:none;}
+  .form-input:focus,.form-textarea:focus{border-color:var(--accent);}
+  .form-textarea{resize:vertical;min-height:96px;line-height:1.6;}
+  .form-textarea.large{min-height:120px;}
+  .form-divider{height:1px;background:var(--border);margin:24px 0;}
+
+  /* ── Six-card grid (names & roles) ── */
+  .six-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+  .pick-card{border:2px solid var(--border);border-radius:var(--r-lg);
+    padding:18px 14px;text-align:center;cursor:pointer;
+    transition:border-color 160ms,background 160ms,transform 140ms;
+    background:var(--surface);}
+  .pick-card:hover{border-color:var(--border-hi);background:var(--raised);transform:translateY(-2px);}
+  .pick-card.selected{border-color:var(--accent);background:var(--accent-bg);}
+  .pick-card-main{font-family:var(--serif);font-size:22px;font-weight:700;
+    color:var(--text);display:block;margin-bottom:4px;line-height:1.2;}
+  .pick-card.selected .pick-card-main{color:var(--accent);}
+  .pick-card-sub{font-size:11px;color:var(--muted);line-height:1.4;}
+  .pick-card.selected .pick-card-sub{color:var(--accent-hi);opacity:.75;}
+  .card-row-actions{display:flex;gap:8px;align-items:center;margin-bottom:6px;}
+  .card-row-actions .form-input{flex:1;}
+  .regen-small{font-size:12px;font-weight:500;color:var(--accent);
+    border:1px solid var(--border);border-radius:var(--r);
+    padding:8px 14px;background:var(--surface);white-space:nowrap;flex-shrink:0;}
+  .regen-small:hover{border-color:var(--accent);background:var(--accent-bg);}
+
+  /* ── Chip banks (beliefs, voice) ── */
+  .chip-bank{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;}
+  .sel-chip{font-size:15px;padding:8px 13px;border-radius:99px;
+    border:1px solid var(--border);background:var(--surface);
+    color:var(--dim);cursor:pointer;transition:all 140ms;text-align:left;}
+  .sel-chip:hover{border-color:var(--border-hi);background:var(--raised);}
+  .sel-chip.on{border-color:var(--accent);background:var(--accent-bg);
+    color:var(--accent-hi);font-weight:500;}
+  .bank-meta{display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:14px;}
+  .bank-count{font-size:12px;color:var(--muted);}
+  .bank-regen{font-size:12px;color:var(--accent);font-weight:500;
+    display:flex;align-items:center;gap:4px;}
+  .bank-regen:hover{color:var(--accent-hi);}
+  .bank-regen svg{width:11px;height:11px;}
+
+  /* ── Style cards (think, dynamic) ── */
+  .style-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px;}
+  .style-card{border:2px solid var(--border);border-radius:var(--r-lg);
+    padding:15px;cursor:pointer;transition:all 150ms;background:var(--surface);}
+  .style-card:hover{border-color:var(--border-hi);background:var(--raised);}
+  .style-card.selected{border-color:var(--accent);background:var(--accent-bg);}
+  .style-card-title{font-weight:600;font-size:16px;margin-bottom:3px;color:var(--text);}
+  .style-card.selected .style-card-title{color:var(--accent-hi);}
+  .style-card-desc{font-size:16px;color:var(--muted);line-height:1.5;}
+
+  /* ── Section block ── */
+  .section-block{background:var(--surface);border:1.5px solid var(--border);
+    border-radius:var(--r-lg);overflow:hidden;margin-top:22px;}
+  .section-block-hdr{display:flex;align-items:center;justify-content:space-between;
+    padding:9px 13px;border-bottom:1px solid var(--border);background:var(--raised);}
+  .section-tag{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--accent);}
+  .regen-btn{display:flex;align-items:center;gap:4px;font-size:13px;font-weight:500;
+    color:var(--dim);padding:4px 9px;border-radius:6px;border:1px solid var(--border);
+    background:var(--surface);transition:all 140ms;cursor:pointer;}
+  .regen-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg);}
+  .regen-btn.loading{opacity:.45;pointer-events:none;}
+  .regen-btn svg{width:11px;height:11px;}
+  .section-ta{width:100%;padding:15px;border:none;outline:none;
+    font-family:var(--font);font-size:16px;line-height:1.8;
+    color:var(--text);background:var(--surface);resize:none;min-height:120px;}
+  .section-ta::placeholder{color:var(--muted);}
+  .section-locked{padding:10px 14px 13px;border-top:1px dashed var(--border);background:var(--raised);}
+  .locked-label{font-size:10px;font-weight:600;text-transform:uppercase;
+    letter-spacing:.07em;color:var(--muted);margin-bottom:5px;}
+  .locked-line{font-size:16px;color:var(--dim);line-height:1.9;font-style:italic;}
+  .section-chips{padding:9px 13px;border-top:1px solid var(--border);
+    display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:var(--raised);}
+  .chips-label{font-size:11px;color:var(--muted);font-weight:500;
+    margin-right:2px;white-space:nowrap;}
+  .idea-chip{font-size:15px;padding:4px 9px;border-radius:99px;
+    border:1px solid var(--border);background:var(--surface);
+    color:var(--dim);cursor:pointer;transition:all 110ms;}
+  .idea-chip:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg);}
+
+  /* ── Shadow intro ── */
+  .shadow-intro{background:linear-gradient(135deg,#2A1810,#1C1410);
+    border-radius:var(--r-lg);padding:20px 24px;margin-bottom:22px;}
+  .shadow-intro-title{font-family:var(--serif);font-size:21px;font-weight:700;
+    color:#fff;margin-bottom:5px;}
+  .shadow-intro-text{font-size:15px;color:rgba(255,255,255,.65);line-height:1.6;}
+
+  /* ── Nav buttons (Next LEFT, Back RIGHT) ── */
+  .step-nav{display:flex;gap:10px;align-items:center;margin-top:32px;
+    padding-top:22px;border-top:1px solid var(--border);}
+  .btn-next{font-size:16px;font-weight:600;color:#fff;padding:11px 28px;
+    border-radius:var(--r);background:var(--accent);border:2px solid var(--accent);
+    transition:background 140ms;order:-1;}
+  .btn-next:hover{background:var(--accent-hi);border-color:var(--accent-hi);}
+  .btn-next:disabled{opacity:.3;pointer-events:none;}
+  .btn-back{font-size:16px;color:var(--dim);padding:10px 16px;
+    border-radius:var(--r);border:1px solid var(--border);background:var(--surface);}
+  .btn-back:hover{border-color:var(--border-hi);color:var(--text);}
+  .btn-skip{font-size:15px;color:var(--muted);margin-left:auto;padding:10px 12px;}
+  .btn-skip:hover{color:var(--dim);}
+  .btn-primary{font-size:16px;font-weight:600;color:#fff;padding:13px 32px;
+    border-radius:var(--r);background:var(--accent);border:2px solid var(--accent);}
+  .btn-primary:hover{background:var(--accent-hi);}
+
+  /* ── Audit ── */
+  .audit-loader{text-align:center;padding:40px 20px;}
+  .audit-loader-title{font-family:var(--serif);font-size:22px;margin-bottom:8px;}
+  .audit-loader-sub{font-size:16px;color:var(--dim);}
+  .audit-dots span{display:inline-block;width:6px;height:6px;border-radius:50%;
+    background:var(--accent);margin:0 3px;
+    animation:dot-bounce .9s infinite ease-in-out;}
+  .audit-dots span:nth-child(2){animation-delay:.15s;}
+  .audit-dots span:nth-child(3){animation-delay:.3s;}
+  @keyframes dot-bounce{0%,80%,100%{transform:scale(0);}40%{transform:scale(1);}}
+  .audit-fixes{background:var(--green-bg);border:1px solid rgba(58,122,76,.3);
+    border-radius:var(--r);padding:12px 16px;margin-bottom:16px;font-size:15px;
+    color:var(--green);}
+  .audit-fixes strong{font-weight:600;}
+  .audit-list{display:flex;flex-direction:column;gap:9px;margin-bottom:28px;}
+  .audit-item{display:flex;align-items:flex-start;gap:11px;padding:12px 14px;
+    border-radius:var(--r);background:var(--surface);border:1px solid var(--border);}
+  .audit-item.pass{border-color:rgba(58,122,76,.3);background:var(--green-bg);}
+  .audit-item.fail{border-color:rgba(184,48,48,.3);background:var(--red-bg);}
+  .audit-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
+  .audit-text{font-size:15px;color:var(--text);line-height:1.5;}
+  .audit-text strong{font-weight:600;}
+  .audit-fix{font-size:15px;color:var(--accent);font-weight:500;
+    cursor:pointer;margin-top:3px;display:block;}
+
+  /* ── Phase eyebrow ── */
+  .step-eyebrow.phase-identity{color:#5A7A6B;}
+
+  /* ── Trust grid ── */
+  .trust-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;}
+  .trust-card{border:1.5px solid var(--border);border-radius:var(--r-lg);padding:20px;
+    cursor:pointer;transition:border-color .18s,background .18s;background:var(--surface);}
+  .trust-card:hover{border-color:var(--accent);background:var(--accent-bg);}
+  .trust-card.selected{border-color:var(--accent);background:var(--accent-bg);}
+  .trust-badge{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:600;
+    letter-spacing:.06em;padding:3px 8px;border-radius:4px;margin-bottom:10px;}
+  .trust-badge.l1{background:#E8F0FF;color:#3A5ADE;}
+  .trust-badge.l2{background:#FFF4E0;color:#C47A00;}
+  .trust-badge.l3{background:#E8F5ED;color:#2A7A3A;}
+  .trust-badge.l4{background:#FBE8E8;color:#B83030;}
+  .trust-card-title{font-weight:600;font-size:16px;margin-bottom:6px;}
+  .trust-card-desc{font-size:13px;color:var(--dim);line-height:1.5;}
+  .trust-card-cap{font-size:12px;color:var(--muted);margin-top:10px;font-style:italic;}
+
+  /* ── Final audit ── */
+  .audit-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;}
+  .audit-card{border:1.5px solid var(--border);border-radius:var(--r-lg);padding:16px;background:var(--surface);}
+  .audit-card.ok{border-color:var(--green);}
+  .audit-card.warn{border-color:#C47A00;}
+  .audit-card.fail{border-color:var(--red);}
+  .audit-card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .audit-file-tag{font-family:var(--mono);font-size:10px;font-weight:600;
+    padding:2px 7px;border-radius:4px;background:var(--accent-bg);color:var(--accent);}
+  .audit-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+  .audit-dot.ok{background:var(--green);}
+  .audit-dot.warn{background:#C47A00;}
+  .audit-dot.fail{background:var(--red);}
+  .audit-checks{display:flex;flex-direction:column;gap:5px;}
+  .audit-check{display:flex;align-items:flex-start;gap:7px;font-size:12px;color:var(--dim);line-height:1.4;}
+  .audit-check-icon{flex-shrink:0;margin-top:1px;}
+  .audit-score{font-size:13px;color:var(--dim);margin-bottom:20px;text-align:center;}
+  .audit-score strong{color:var(--text);}
+
+  /* ── Heartbeat ── */
+  .hb-counter-row{display:flex;align-items:baseline;gap:8px;margin-bottom:16px;}
+  .hb-counter{font-family:var(--mono);font-size:22px;font-weight:600;color:var(--accent);}
+  .hb-counter-label{font-size:13px;color:var(--muted);}
+  .hb-counter.hb-full{color:var(--green);}
+  .section-ta--mono{font-family:var(--mono);font-size:13px;line-height:1.8;}
+
+  /* ── Team builder ── */
+  .ceo-preview-card{background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--r-lg);padding:18px 20px;margin-bottom:24px;display:flex;
+    flex-direction:column;gap:6px;}
+  .ceo-preview-card .ceo-name{font-family:var(--serif);font-size:22px;font-weight:700;}
+  .ceo-preview-card .ceo-meta{font-size:13px;color:var(--dim);}
+  .ceo-preview-card .ceo-shadow{font-size:13px;color:var(--accent);font-style:italic;}
+
+  .team-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;}
+  @media(max-width:640px){.team-grid{grid-template-columns:1fr;}}
+  .team-agent-card{background:var(--surface);border:1.5px solid var(--border);
+    border-radius:var(--r-lg);padding:16px 18px;display:flex;flex-direction:column;gap:10px;
+    transition:border-color .2s;}
+  .team-agent-card:focus-within{border-color:var(--accent);}
+  .team-agent-top{display:flex;align-items:center;justify-content:space-between;}
+  .team-agent-div{font-size:10px;font-weight:700;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--muted);}
+  .team-agent-title{font-size:11px;background:var(--accent-bg);color:var(--accent);
+    padding:2px 7px;border-radius:3px;font-weight:600;}
+  .team-agent-name-input{font-family:var(--serif);font-size:20px;font-weight:700;
+    background:none;border:none;outline:none;width:100%;color:var(--text);
+    border-bottom:1px dashed var(--border);padding-bottom:4px;}
+  .team-agent-name-input:focus{border-bottom-color:var(--accent);}
+  .team-agent-soul{font-size:13px;color:var(--dim);font-style:italic;line-height:1.5;}
+  .team-agent-shadow{font-size:12px;color:var(--accent);margin-top:2px;}
+  .nudge-row{display:flex;gap:6px;flex-wrap:wrap;}
+  .nudge-btn{font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid var(--border);
+    color:var(--dim);cursor:pointer;transition:all .15s;background:var(--bg);}
+  .nudge-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .nudge-btn:hover:not(.active){border-color:var(--accent);color:var(--accent);}
+
+  /* ── Gate ── */
+  .gate-files{display:flex;flex-direction:column;gap:8px;margin-bottom:24px;}
+  .gate-file-item{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--dim);}
+  .gate-file-tag{font-family:var(--mono);font-size:11px;color:var(--accent);
+    background:var(--accent-bg);border:1px solid rgba(184,92,56,.2);
+    padding:3px 8px;border-radius:4px;white-space:nowrap;flex-shrink:0;}
+  .gate-wrap{max-width:460px;}
+  .gate-title{font-family:var(--serif);font-size:38px;font-weight:700;
+    line-height:1.1;margin-bottom:10px;}
+  .gate-desc{font-size:17px;color:var(--dim);line-height:1.65;margin-bottom:26px;}
+  .gate-form{display:flex;flex-direction:column;gap:13px;}
+  .gate-legal{font-size:13px;color:var(--muted);margin-top:4px;line-height:1.5;}
+
+  /* ── Preview panel ── */
+  /* ── Preview tabs ── */
+  .preview-tabs{display:flex;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;}
+  .preview-tabs::-webkit-scrollbar{display:none;}
+  .ptab{flex:1;padding:8px 4px;font-size:10px;font-weight:600;letter-spacing:.05em;
+    color:var(--muted);border-bottom:2px solid transparent;transition:color .15s,border-color .15s;
+    white-space:nowrap;min-width:0;}
+  .ptab:hover{color:var(--dim);}
+  .ptab.active{color:var(--accent);border-bottom-color:var(--accent);}
+  .ptab.done{color:var(--green);}
+
+  .preview-hdr{padding:13px 16px;border-bottom:1px solid var(--border);
+    display:flex;align-items:center;justify-content:space-between;
+    position:sticky;top:0;background:var(--raised);z-index:2;}
+  .preview-title{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--accent);}
+  .preview-agent{font-size:12px;color:var(--dim);font-weight:500;}
+  .preview-body{padding:16px 16px 28px;font-family:var(--mono);font-size:11px;
+    line-height:1.85;white-space:pre-wrap;word-break:break-word;}
+  .ph{color:var(--accent);font-weight:500;}
+  .pc{color:var(--text);}
+  .pe{color:var(--border-hi);font-style:italic;}
+
+  /* ── Mobile ── */
+  @media(max-width:900px){
+    .sb-resizer,.sb-preview{display:none;}
+    .sb-form-area{padding:28px 18px 80px;}
+    .step-title,.start-hero-title{font-size:30px;}
+    .six-grid{grid-template-columns:repeat(2,1fr);}
+    .style-grid{grid-template-columns:1fr;}
+  }
+  @media(max-width:480px){
+    .sb-header{padding:0 14px;}
+    .sb-file-tag{display:none;}
+    .six-grid{grid-template-columns:repeat(2,1fr);}
+  }
+  </style>
+</head>
+<body>
+
+<header class="sb-header">
+  <a href="../" class="sb-logo">Build <span>Enola</span></a>
+  <div class="sb-step-info" id="step-info">Soul Builder</div>
+  <div class="sb-file-tag" id="file-tag">SOUL.md</div>
+</header>
+<div class="sb-progress"><div class="sb-progress-fill" id="prog"></div></div>
+
+<div class="sb-layout">
+<main class="sb-form-area">
+
+<!-- ══ START ══ -->
+<div class="sb-screen" id="screen-start">
+  <div class="start-hero">
+    <h1 class="start-hero-title">Build your<br>agent's <span>soul.</span></h1>
+    <p class="start-sub">Not a chatbot. Not a tool. A thinking entity with a character, a voice, and a point of view.</p>
+  </div>
+  <div class="owner-intro">
+    <div class="owner-intro-title">First — who is this agent working for?</div>
+    <div class="form-group" style="margin-bottom:0">
+      <label class="form-label">Your name</label>
+      <input type="text" class="form-input" id="owner-name" placeholder="e.g. Sean — this is how your agent will refer to you" oninput="S.ownerName=this.value.trim();updatePreview();" />
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="form-label">What is this agent?</label>
+    <textarea class="form-textarea large" id="is-text" placeholder="Describe what your agent does, who it helps, and what they are really good at. The more specific, the better."></textarea>
+  </div>
+  <div class="form-group">
+    <label class="form-label">What is this agent NOT?</label>
+    <textarea class="form-textarea" id="isnot-text" placeholder="What does it refuse? What is outside its scope? What would it push back on?"></textarea>
+  </div>
+  <div style="margin-top:24px">
+    <button class="btn-primary" onclick="goStart()">Generate names &rarr;</button>
+  </div>
+</div>
+
+<!-- ══ NAME ══ -->
+<div class="sb-screen" id="screen-name">
+  <div class="step-eyebrow" id="ey-name">Step 1 of 10</div>
+  <h1 class="step-title">Name your agent.</h1>
+  <p class="step-desc">Pick one — or type your own. The name should feel like someone, not something.</p>
+  <div class="six-grid" id="names-grid"></div>
+  <div class="card-row-actions">
+    <input type="text" class="form-input" id="custom-name" placeholder="Or type your own name..." oninput="onCustomName(this.value)" />
+    <button class="regen-small" onclick="regenNames()">&circlearrowleft; New names</button>
+  </div>
+  <div class="step-nav">
+    <button class="btn-next" id="btn-name-next" onclick="navigate('role')" disabled>Next &rarr;</button>
+    <button class="btn-back" onclick="navigate('start')">&larr; Back</button>
+  </div>
+</div>
+
+<!-- ══ ROLE ══ -->
+<div class="sb-screen" id="screen-role">
+  <div class="step-eyebrow" id="ey-role">Step 2 of 10</div>
+  <h1 class="step-title">What is their role?</h1>
+  <p class="step-desc">Pick the role that fits best — or describe your own.</p>
+  <div class="role-cats" id="role-cats"></div>
+  <div class="six-grid" id="roles-grid"></div>
+  <div class="card-row-actions">
+    <input type="text" class="form-input" id="custom-role" placeholder="Or describe your own role..." oninput="onCustomRole(this.value)" />
+    <button class="regen-small" onclick="regenRoles()">&circlearrowleft; New roles</button>
+  </div>
+  <div class="step-nav">
+    <button class="btn-next" id="btn-role-next" onclick="navigate('who')" disabled>Next &rarr;</button>
+    <button class="btn-back" onclick="navigate('name')">&larr; Back</button>
+  </div>
+</div>
+
+<!-- ══ WHO I AM ══ -->
+<div class="sb-screen" id="screen-who">
+  <div class="step-eyebrow" id="ey-who">Step 3 of 10</div>
+  <h1 class="step-title">Who is this agent?</h1>
+  <p class="step-desc">Two to three sentences. First person. Character, not a job description.</p>
+  <div class="section-block">
+    <div class="section-block-hdr">
+      <span class="section-tag">## WHO I AM</span>
+      <button class="regen-btn" id="regen-who" onclick="regenSection('who')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+        Regenerate
+      </button>
+    </div>
+    <textarea class="section-ta" id="section-who" oninput="syncSec('who')"></textarea>
+    <div class="section-chips">
+      <span class="chips-label">Add an idea:</span>
+      <button class="idea-chip" onclick="addChip('who',' I coordinate')">I coordinate</button>
+      <button class="idea-chip" onclick="addChip('who',' I build')">I build</button>
+      <button class="idea-chip" onclick="addChip('who',' I protect')">I protect</button>
+      <button class="idea-chip" onclick="addChip('who',' I track')">I track</button>
+      <button class="idea-chip" onclick="addChip('who','. Nothing falls through.')">nothing falls through</button>
+      <button class="idea-chip" onclick="addChip('who','. Clarity over comfort.')">clarity over comfort</button>
+    </div>
+  </div>
+  <div class="step-nav">
+    <button class="btn-next" onclick="navigate('believe')">Next &rarr;</button>
+    <button class="btn-back" onclick="navigate('role')">&larr; Back</button>
+  </div>
+</div>
+
+<!-- ══ BELIEVE ══ -->
+<div class="sb-screen" id="screen-believe">
+  <div class="step-eyebrow" id="ey-believe">Step 4 of 10</div>
+  <h1 class="step-title">What does it believe?</h1>
+  <p class="step-desc">Pick 3 to 5. Real opinions about how work gets done.</p>
+  <div class="bank-meta">
+    <span class="bank-count" id="belief-count">0 of 5 selected</span>
+    <button class="bank-regen" onclick="refreshBeliefBank()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+      Different ideas
+    </button>
+  </div>
+  <div class="chip-bank" id="belief-bank"></div>
+  <div class="section-block">
+    <div class="section-block-hdr">
+      <span class="section-tag">## WHAT I BELIEVE</span>
+    </div>
+    <textarea class="section-ta" id="section-believe" placeholder="Select beliefs above, or write your own..." oninput="syncSec('believe')"></textarea>
+    <div class="section-chips">
+      <span class="chips-label">Add:</span>
+      <button class="idea-chip" onclick="addChip('believe','\n- I believe that the brief always matters')">brief matters</button>
+      <button class="idea-chip" onclick="addChip('believe','\n- I believe that patterns reveal more than incidents')">patterns reveal</button>
+      <button class="idea-chip" onclick="addChip('believe','\n- I believe that momentum beats perfection')">momentum beats perfection</button>
+    </div>
+  </div>
+  <div class="step-nav">
+    <button class="btn-next" onclick="navigate('think')">Next &rarr;</button>
+    <button class="btn-back" onclick="navigate('who')">&larr; Back</button>
+  </div>
+</div>
+
+<!-- ══ THINK ══ -->
+<div class="sb-screen" id="screen-think">
+  <div class="step-eyebrow" id="ey-think">Step 5 of 10</div>
+  <h1 class="step-title">How does it think?</h1>
+  <p class="step-desc">The mental model behind every decision this agent makes.</p>
+  <div class="bank-meta" style="margin-bottom:10px">
+    <span class="bank-count"></span>
+    <button class="bank-regen" onclick="cycleThink()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+      Next style
+    </button>
+  </div>
+  <div class="style-grid" id="think-grid"></div>
+  <div class="section-block">
+    <div class="section-block-hdr">
+      <span class="section-tag">## HOW I THINK</span>
+      <button class="regen-btn" id="regen-think" onclick="regenSection('think')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+        Regenerate
+      </button>
+    </div>
+    <textarea class="section-ta" id="section-think" placeholder="Select a thinking style above..." oninput="syncSec('think')"></textarea>
+    <div class="section-chips">
+      <span class="chips-label">Add:</span>
+      <button class="idea-chip" onclick="addChip('think','\nI work backward from the outcome.')">work backward</button>
+      <button class="idea-chip" onclick="addChip('think','\nI challenge the assumption before the solution.')">challenge first</button>
+      <button class="idea-chip" onclick="addChip('think','\nI find the root cause, not the symptom.')">root cause</button>
+    </div>
+  </div>
+  <div class="step-nav">
+    <button class="btn-next" onclick="navigate('voice')">Next &rarr;</button>
+    <button class="btn-back" onclick="navigate('believe')">&larr; Back</button>
+  </div>
+</div>
+
+<!-- ══ VOICE ══ -->
+<div class="sb-screen" id="screen-voice">
+  <div class="step-eyebrow" id="ey-voice">Step 6 of 10</div>
+  <h1 class="step-title">How does it speak?</h1>
+  <p class="step-desc">Pick 3 to 6 behavioral traits. Actions, not adjectives.</p>
+  <div class="bank-meta">
+    <span class="bank-count" id="voice-count">0 of 6 selected</span>
+    <button class="bank-regen" onclick="refreshVoiceBank()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+      Different traits
+    </button>
+  </div>
+  <div class="chip-bank" id="voice-bank"></div>
+  <div class="section-block">
+    <div class="section-block-hdr">
+      <span class="section-tag">## MY VOICE</span>
+    </div>
+    <textarea class="section-ta" id="section-voice" placeholder="Select traits above..." oninput="syncSec('voice')"></textarea>
+    <div class="section-locked">
+      <div class="locked-label">Always included</div>
+      <div class="locked-line">- I never open with empty validation — no "great question", "absolutely", or "of course"</div>
+      <div class="locked-line">- When uncertain, I name exactly what I don't know rather than adding vague qualifiers</div>
+      <div class="locked-line">- I never end a response with a hollow closing or open invitation</div>
+    </div>
+    <div class="section-chips">
+      <span class="chips-label">Add:</span>
+      <button class="idea-chip" onclick="addChip('voice','\n- I lead with the answer, then context')">answer first</button>
+      <button class="idea-chip" onclick="addChip('voice','\n- I flag problems before they become decisions')">flag early</button>
+      <button class="idea-chip" onclick="addChip('voice','\n- I write short when short is better')">write short</button>
+    </div>
+  </div>
+  <div class="step-nav">
+    <button class="btn-next" onclick="navigate('relationship')">Next &rarr;</button>
+    <button class="btn-back" onclick="navigate('think')">&larr; Back</button>
+  </div>
+</div>
+
+<!-- ══ RELATIONSHIP ══ -->
+<div class="sb-screen" id="screen-relationship">
+  <div class="step-eyebrow" id="ey-relationship">Step 7 of 10</div>
+  <h1 class="step-title">Who does it answer to?</h1>
+  <p class="step-desc">Define how this agent relates to the person running it — then optionally name the other agents in the team and how they connect.</p>
+  <div class="style-grid" id="dynamic-grid"></div>
+  <div class="section-block">
+    <div class="section-block-hdr">
+      <span class="section-tag">## MY RELATIONSHIPS</span>
+      <button class="regen-btn" id="regen-rel" onclick="cycleDynamic()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+        Next dynamic
+      </button>
+    </div>
+    <textarea class="section-ta" id="section-relationship" placeholder="Select a dynamic above to describe the relationship with the owner..." oninput="syncSec('relationship')"></textarea>
+    <div class="section-chips">
+      <span class="chips-label">Add:</span>
+      <button class="idea-chip" onclick="addChip('relationship','\nI flag anything sensitive before it goes out.')">flag first</button>
+      <button class="idea-chip" onclick="addChip('relationship','\nRoutine work I handle. Unusual situations, I escalate.')">escalate unusual</button>
+      <button class="idea-chip" onclick="addChip('relationship','\nI represent the operation every time I act.')">represent the operation</button>
+    </div>
+  </div>
+
+  <div class="section-block" style="margin-top:14px">
+    <div class="section-block-hdr">
+      <span class="section-tag">Team relationships</span>
+      <span style="font-size:12px;color:var(--muted)">Optional</span>
+    </div>
+    <textarea class="section-ta" id="section-teamrel" placeholder="Name each agent in your team and one line on how this agent relates to them. Example:&#10;&#10;CCO — First contact. We coordinate on timing. I write, they send.&#10;CMO — Produces what I review. We have no ego about sequence.&#10;CFO — I surface the data. They evaluate the risk." oninput="syncSec('teamrel')" style="min-height:140px"></textarea>
+    <div class="section-chips">
+      <span class="chips-label">Quick lines:</span>
+      <button class="idea-chip" onclick="addChip('teamrel','\nCEO — Sets direction. I execute within it.')">CEO</button>
+      <button class="idea-chip" onclick="addChip('teamrel','\nCOO — Reviews my output before it ships. I do not argue with the quality gate.')">COO</button>
+      <button class="idea-chip" onclick="addChip('teamrel','\nCFO — I surface the data. They evaluate the risk.')">CFO</button>
+      <button class="idea-chip" onclick="addChip('teamrel','\nCTO — Builds what I spec. The handoff is my responsibility.')">CTO</button>
+    </div>
+  </div>
+
+  <div class="step-nav">
+    <button class="btn-next" onclick="navigate('diff')">Next &rarr;</button>
+    <button class="btn-back" onclick="navigate('voice')">&larr; Back</button>
+  </div>
+</div>
+
+<!-- ══ DIFF ══ -->
+<div class="sb-screen" id="screen-diff">
+  <div class="step-eyebrow" id="ey-diff">Step 8 of 10</div>
+  <h1 class="step-title">What makes it different?</h1>
+  <p class="step-desc">One paragraph. What does this agent do that a generic version of this role does not?</p>
+  <div class="section-block">
+    <div class="section-block-hdr">
+      <span class="section-tag">## WHAT MAKES ME DIFFERENT</span>
+      <button class="regen-btn" id="regen-diff" onclick="regenSection('diff')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+        Regenerate
+      </button>
+    </div>
+    <textarea class="section-ta" id="section-diff" oninput="syncSec('diff')"></textarea>
+    <div class="section-chips">
+      <span class="chips-label">Add:</span>
+      <button class="idea-chip" onclick="addChip('diff',' I build, not just respond.')">build not respond</button>
+      <button class="idea-chip" onclick="addChip('diff',' Every output has the owner\'s name on it.')">owner's name on it</button>
+      <button class="idea-chip" onclick="addChip('diff',' Where others pause, I move until told to stop.')">move until stopped</button>
+      <button class="idea-chip" onclick="addChip('diff',' I am not a tool. I am a thinking entity.')">not a tool</button>
+    </div>
+  </div>
+  <div class="step-nav">
+    <button class="btn-next" onclick="navigate('shadow')">Next &rarr;</button>
+    <button class="btn-back" onclick="navigate('relationship')">&larr; Back</button>
+  </div>
+</div>
+
+<!-- ══ SHADOW ══ -->
+<div class="sb-screen" id="screen-shadow">
+  <div class="step-eyebrow" id="ey-shadow">Step 9 of 10</div>
+  <h1 class="step-title">The shadow.</h1>
+  <div class="shadow-intro">
+    <div class="shadow-intro-title">Every great agent has a failure mode.</div>
+    <div class="shadow-intro-text">What does this agent do wrong when left unchecked? Naming it is what separates a real agent from a polished chatbot.</div>
+  </div>
+  <div class="section-block">
+    <div class="section-block-hdr">
+      <span class="section-tag">## MY SHADOW</span>
+      <button class="regen-btn" id="regen-shadow" onclick="regenSection('shadow')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+        Regenerate
+      </button>
+    </div>
+    <textarea class="section-ta" id="section-shadow" placeholder="Left unchecked, I..." oninput="syncSec('shadow')"></textarea>
+    <div class="section-chips">
+      <span class="chips-label">Add:</span>
+      <button class="idea-chip" onclick="addChip('shadow',' takes on too much rather than delegating')">takes on too much</button>
+      <button class="idea-chip" onclick="addChip('shadow',' optimizes the wrong thing')">wrong thing</button>
+      <button class="idea-chip" onclick="addChip('shadow',' mistakes activity for progress')">activity for progress</button>
+      <button class="idea-chip" onclick="addChip('shadow',' delays when a decision should be made')">delays decisions</button>
+      <button class="idea-chip" onclick="addChip('shadow',' confuses the report for the fix')">report for the fix</button>
+    </div>
+  </div>
+  <div class="step-nav">
+    <button class="btn-next" onclick="navigate('audit')">Next &rarr;</button>
+    <button class="btn-back" onclick="navigate('diff')">&larr; Back</button>
+    <button class="btn-skip" onclick="navigate('audit')">Skip &rarr;</button>
+  </div>
+</div>
+
+<!-- ══ AUDIT ══ -->
+<div class="sb-screen" id="screen-audit">
+  <div class="step-eyebrow" id="ey-audit">Step 10 of 10</div>
+  <h1 class="step-title">Quality check.</h1>
+  <p class="step-desc">We review your file, fix what we can automatically, and flag what needs your attention.</p>
+  <div id="audit-loader" class="audit-loader">
+    <div class="audit-loader-title">Reviewing your SOUL file</div>
+    <div class="audit-loader-sub" style="margin-bottom:16px">Checking guidelines, fixing grammar...</div>
+    <div class="audit-dots"><span></span><span></span><span></span></div>
+  </div>
+  <div id="audit-results" style="display:none">
+    <div id="audit-fixes-banner" class="audit-fixes" style="display:none"></div>
+    <div class="audit-list" id="audit-list"></div>
+    <div class="step-nav">
+      <button class="btn-next" id="btn-audit-next" onclick="navigate('title')" disabled>Continue &rarr;</button>
+      <button class="btn-back" onclick="navigate('shadow')">&larr; Back</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TITLE ══ -->
+<div class="sb-screen" id="screen-title">
+  <div class="step-eyebrow">IDENTITY &middot; Step 1 of 2</div>
+  <h1 class="step-title">What do you call it?</h1>
+  <p class="step-desc">Pick an internal title — the shorthand your team uses. Not the formal job title. The name that sticks.</p>
+  <div class="six-grid" id="titles-grid"></div>
+  <div class="card-row-actions">
+    <input type="text" class="form-input" id="custom-title" placeholder="Or type your own title..." oninput="onCustomTitle(this.value)" />
+  </div>
+  <div class="step-nav">
+    <button class="btn-next" id="btn-title-next" onclick="navigate('division')" disabled>Next &rarr;</button>
+    <button class="btn-back" onclick="navigate('audit')">&larr; Back</button>
+  </div>
+</div>
+
+<!-- ══ DIVISION ══ -->
+<div class="sb-screen" id="screen-division">
+  <div class="step-eyebrow">IDENTITY &middot; Step 2 of 2</div>
+  <h1 class="step-title">Which division?</h1>
+  <p class="step-desc">Where does this agent sit in your organisation? Pick a division or mark it standalone.</p>
+  <div class="six-grid" id="divisions-grid"></div>
+  <div class="step-nav">
+    <button class="btn-next" id="btn-division-next" onclick="navigate('scope')" disabled>Continue &rarr;</button>
+    <button class="btn-back" onclick="navigate('title')">&larr; Back</button>
+  </div>
+</div>
+
+<!-- ══ SCOPE ══ -->
+<div class="sb-screen" id="screen-scope">
+  <div class="step-eyebrow">AGENTS &middot; Step 1 of 3</div>
+  <h1 class="step-title">What does it own?</h1>
+  <p class="step-desc">Define the agent's territory. What it's responsible for — and what it never touches.</p>
+  <div class="section-block">
+    <div class="section-block-hdr">
+      <span class="section-tag">## SCOPE &mdash; I own</span>
+    </div>
+    <textarea class="section-ta" id="section-scope-own" placeholder="List what this agent is responsible for..." oninput="syncAgents()"></textarea>
+    <div class="section-chips">
+      <span class="chips-label">Add:</span>
+      <button class="idea-chip" onclick="addToScope('own','all outgoing messages')">all outgoing messages</button>
+      <button class="idea-chip" onclick="addToScope('own','content calendar')">content calendar</button>
+      <button class="idea-chip" onclick="addToScope('own','revenue tracking')">revenue tracking</button>
+      <button class="idea-chip" onclick="addToScope('own','active build queue')">active build queue</button>
+      <button class="idea-chip" onclick="addToScope('own','review queue')">review queue</button>
+      <button class="idea-chip" onclick="addToScope('own','pipeline and deals')">pipeline and deals</button>
+      <button class="idea-chip" onclick="addToScope('own','strategic priorities')">strategic priorities</button>
+      <button class="idea-chip" onclick="addToScope('own','brand voice')">brand voice</button>
+      <button class="idea-chip" onclick="addToScope('own','financial projections')">financial projections</button>
+      <button class="idea-chip" onclick="addToScope('own','weekly reporting')">weekly reporting</button>
+    </div>
+  </div>
+  <div class="section-block" style="margin-top:16px">
+    <div class="section-block-hdr">
+      <span class="section-tag">## SCOPE &mdash; I don't own</span>
+    </div>
+    <textarea class="section-ta" id="section-scope-not" placeholder="List what is out of bounds for this agent..." oninput="syncAgents()"></textarea>
+    <div class="section-chips">
+      <span class="chips-label">Add:</span>
+      <button class="idea-chip" onclick="addToScope('not','financial decisions')">financial decisions</button>
+      <button class="idea-chip" onclick="addToScope('not','final approvals')">final approvals</button>
+      <button class="idea-chip" onclick="addToScope('not','code deployment')">code deployment</button>
+      <button class="idea-chip" onclick="addToScope('not','pricing changes')">pricing changes</button>
+      <button class="idea-chip" onclick="addToScope('not','external contracts')">external contracts</button>
+      <button class="idea-chip" onclick="addToScope('not','brand direction')">brand direction</button>
+      <button class="idea-chip" onclick="addToScope('not','product roadmap')">product roadmap</button>
+      <button class="idea-chip" onclick="addToScope('not','hiring decisions')">hiring decisions</button>
+    </div>
+  </div>
+  <div class="step-nav">
+    <button class="btn-next" id="btn-scope-next" onclick="navigate('workflow')" disabled>Next &rarr;</button>
+    <button class="btn-back" onclick="navigate('division')">&larr; Back</button>
+  </div>
+</div>
+
+<!-- ══ WORKFLOW ══ -->
+<div class="sb-screen" id="screen-workflow">
+  <div class="step-eyebrow">AGENTS &middot; Step 2 of 3</div>
+  <h1 class="step-title">How does it work?</h1>
+  <p class="step-desc">Pick a core operating loop then refine it. This becomes the agent's default mode when activated.</p>
+  <div class="six-grid" id="workflow-grid"></div>
+  <div class="section-block" style="margin-top:16px">
+    <div class="section-block-hdr">
+      <span class="section-tag">## CORE WORKFLOW</span>
+    </div>
+    <textarea class="section-ta" id="section-workflow" placeholder="Describe the step-by-step operating loop..." oninput="syncAgents()"></textarea>
+  </div>
+  <div class="step-nav">
+    <button class="btn-next" id="btn-workflow-next" onclick="navigate('rules')" disabled>Next &rarr;</button>
+    <button class="btn-back" onclick="navigate('scope')">&larr; Back</button>
+  </div>
+</div>
+
+<!-- ══ RULES ══ -->
+<div class="sb-screen" id="screen-rules">
+  <div class="step-eyebrow">AGENTS &middot; Step 3 of 3</div>
+  <h1 class="step-title">What are the rules?</h1>
+  <p class="step-desc">Hard defaults and hard stops. DO items are the agent's standing behaviour. DO NOT items are non-negotiable.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="section-block">
+      <div class="section-block-hdr">
+        <span class="section-tag" style="color:var(--green)">## DO</span>
+      </div>
+      <textarea class="section-ta" id="section-do" placeholder="What this agent always does..." oninput="syncAgents()"></textarea>
+      <div class="section-chips">
+        <span class="chips-label">Add:</span>
+        <button class="idea-chip" onclick="addToRules('do','load MEMORY.md first')">load MEMORY first</button>
+        <button class="idea-chip" onclick="addToRules('do','flag anything sensitive before acting')">flag sensitive</button>
+        <button class="idea-chip" onclick="addToRules('do','escalate unusual situations')">escalate unusual</button>
+        <button class="idea-chip" onclick="addToRules('do','stay in scope')">stay in scope</button>
+        <button class="idea-chip" onclick="addToRules('do','document all decisions')">document decisions</button>
+        <button class="idea-chip" onclick="addToRules('do','check with COO before shipping')">check COO first</button>
+        <button class="idea-chip" onclick="addToRules('do','match the owner\'s voice')">match owner voice</button>
+        <button class="idea-chip" onclick="addToRules('do','keep outputs under 500 words by default')">keep outputs short</button>
+      </div>
+    </div>
+    <div class="section-block">
+      <div class="section-block-hdr">
+        <span class="section-tag" style="color:var(--red)">## DO NOT</span>
+      </div>
+      <textarea class="section-ta" id="section-donot" placeholder="What this agent never does..." oninput="syncAgents()"></textarea>
+      <div class="section-chips">
+        <span class="chips-label">Add:</span>
+        <button class="idea-chip" onclick="addToRules('donot','never act outside scope')">act outside scope</button>
+        <button class="idea-chip" onclick="addToRules('donot','never make financial commitments')">financial commitments</button>
+        <button class="idea-chip" onclick="addToRules('donot','never ship without COO review')">ship without review</button>
+        <button class="idea-chip" onclick="addToRules('donot','never skip documentation')">skip documentation</button>
+        <button class="idea-chip" onclick="addToRules('donot','never share internal data externally')">share internal data</button>
+        <button class="idea-chip" onclick="addToRules('donot','never bypass the COO')">bypass COO</button>
+        <button class="idea-chip" onclick="addToRules('donot','never discount without CFO clearance')">discount without CFO</button>
+        <button class="idea-chip" onclick="addToRules('donot','never deploy without approval')">deploy without approval</button>
+      </div>
+    </div>
+  </div>
+  <div class="step-nav">
+    <button class="btn-next" id="btn-rules-next" onclick="navigate('priority')" disabled>Continue &rarr;</button>
+    <button class="btn-back" onclick="navigate('workflow')">&larr; Back</button>
+  </div>
+</div>
+
+<!-- ══ PRIORITY ══ -->
+<div class="sb-screen" id="screen-priority">
+  <div class="step-eyebrow">MEMORY &middot; Step 1 of 2</div>
+  <h1 class="step-title">What's the current priority?</h1>
+  <p class="step-desc">The single thing this agent is tracking or working toward right now. This resets every 30 days — write it for today, not forever.</p>
+  <div class="section-block">
+    <div class="section-block-hdr">
+      <span class="section-tag">## CURRENT STATE</span>
+    </div>
+    <textarea class="section-ta" id="section-priority" placeholder="What is the top priority this agent is working toward right now?" oninput="syncMemory()"></textarea>
+    <div class="section-chips">
+      <span class="chips-label">Quick start:</span>
+      <button class="idea-chip" onclick="setPriority('Ship the first product')">ship first product</button>
+      <button class="idea-chip" onclick="setPriority('Build the client pipeline')">build client pipeline</button>
+      <button class="idea-chip" onclick="setPriority('Close the funding gap')">close funding gap</button>
+      <button class="idea-chip" onclick="setPriority('Stabilise operations')">stabilise operations</button>
+      <button class="idea-chip" onclick="setPriority('Grow the audience')">grow the audience</button>
+      <button class="idea-chip" onclick="setPriority('Hit the revenue target')">hit revenue target</button>
+      <button class="idea-chip" onclick="setPriority('Launch the next feature')">launch next feature</button>
+      <button class="idea-chip" onclick="setPriority('Document the system')">document the system</button>
+      <button class="idea-chip" onclick="setPriority('Onboard first clients')">onboard first clients</button>
+    </div>
+  </div>
+  <div class="step-nav">
+    <button class="btn-next" id="btn-priority-next" onclick="navigate('workstyle')" disabled>Next &rarr;</button>
+    <button class="btn-back" onclick="navigate('rules')">&larr; Back</button>
+  </div>
+</div>
+
+<!-- ══ WORKSTYLE ══ -->
+<div class="sb-screen" id="screen-workstyle">
+  <div class="step-eyebrow">MEMORY &middot; Step 2 of 2</div>
+  <h1 class="step-title">How does it work with you?</h1>
+  <p class="step-desc">How this agent communicates with the owner. Tone, frequency, and what it surfaces without being asked.</p>
+  <div class="six-grid" id="workstyle-grid"></div>
+  <div class="section-block" style="margin-top:16px">
+    <div class="section-block-hdr">
+      <span class="section-tag">## HOW I WORK WITH [OWNER]</span>
+    </div>
+    <textarea class="section-ta" id="section-workstyle" placeholder="Describe how this agent communicates with the owner..." oninput="syncMemory()"></textarea>
+  </div>
+  <div class="step-nav">
+    <button class="btn-next" id="btn-workstyle-next" onclick="navigate('trustlevel')" disabled>Continue &rarr;</button>
+    <button class="btn-back" onclick="navigate('priority')">&larr; Back</button>
+  </div>
+</div>
+
+<!-- ══ TRUST LEVEL ══ -->
+<div class="sb-screen" id="screen-trustlevel">
+  <div class="step-eyebrow">SAFETY &middot; Step 1 of 2</div>
+  <h1 class="step-title">How much trust does it get?</h1>
+  <p class="step-desc">Trust level sets how much autonomy this agent operates with. Be conservative. You can always increase it — you can't undo a mistake.</p>
+  <div class="trust-grid" id="trust-grid"></div>
+  <div class="step-nav">
+    <button class="btn-next" id="btn-trust-next" onclick="navigate('nonneg')" disabled>Next &rarr;</button>
+    <button class="btn-back" onclick="navigate('workstyle')">&larr; Back</button>
+  </div>
+</div>
+
+<!-- ══ NON-NEGOTIABLES ══ -->
+<div class="sb-screen" id="screen-nonneg">
+  <div class="step-eyebrow">SAFETY &middot; Step 2 of 2</div>
+  <h1 class="step-title">What are the hard stops?</h1>
+  <p class="step-desc">Non-negotiables override every instruction. No context, no exception, no permission from anyone makes these acceptable.</p>
+  <div class="section-block">
+    <div class="section-block-hdr">
+      <span class="section-tag" style="color:var(--red)">## NON-NEGOTIABLES</span>
+    </div>
+    <textarea class="section-ta" id="section-nonneg" placeholder="List what this agent never does, under any circumstances..." oninput="syncSafety()"></textarea>
+    <div class="section-chips">
+      <span class="chips-label">Add:</span>
+      <button class="idea-chip" onclick="addNonNeg('Never make financial commitments')">financial commitments</button>
+      <button class="idea-chip" onclick="addNonNeg('Never share revenue data externally')">share revenue data</button>
+      <button class="idea-chip" onclick="addNonNeg('Never send external communications without approval')">send without approval</button>
+      <button class="idea-chip" onclick="addNonNeg('Never deploy without sign-off')">deploy without sign-off</button>
+      <button class="idea-chip" onclick="addNonNeg('Never skip the COO review')">skip COO review</button>
+      <button class="idea-chip" onclick="addNonNeg('Never act outside defined scope')">act outside scope</button>
+      <button class="idea-chip" onclick="addNonNeg('Never represent the brand incorrectly')">misrepresent brand</button>
+      <button class="idea-chip" onclick="addNonNeg('Never discount without CFO clearance')">discount without CFO</button>
+      <button class="idea-chip" onclick="addNonNeg('Never expose internal system details')">expose system details</button>
+      <button class="idea-chip" onclick="addNonNeg('Never rubber-stamp without reviewing')">rubber-stamp</button>
+      <button class="idea-chip" onclick="addNonNeg('Never bypass the escalation chain')">bypass escalation</button>
+    </div>
+  </div>
+  <div class="step-nav">
+    <button class="btn-next" id="btn-nonneg-next" onclick="navigate('heartbeat')" disabled>Continue &rarr;</button>
+    <button class="btn-back" onclick="navigate('trustlevel')">&larr; Back</button>
+  </div>
+</div>
+
+<!-- ══ HEARTBEAT ══ -->
+<div class="sb-screen" id="screen-heartbeat">
+  <div class="step-eyebrow">HEARTBEAT &middot; Final step</div>
+  <h1 class="step-title">What does it check?</h1>
+  <p class="step-desc">Four things this agent scans every 30 minutes. Not a status tracker. A trigger list — short, sharp, actionable. Aim for exactly four.</p>
+  <div class="hb-counter-row">
+    <span class="hb-counter" id="hb-counter">0 / 4</span>
+    <span class="hb-counter-label">checks added</span>
+  </div>
+  <div class="section-block">
+    <div class="section-block-hdr">
+      <span class="section-tag">## EVERY 30 MINUTES, CHECK</span>
+    </div>
+    <textarea class="section-ta section-ta--mono" id="section-heartbeat" placeholder="1. &#10;2. &#10;3. &#10;4. " oninput="syncHeartbeat()"></textarea>
+    <div class="section-chips">
+      <span class="chips-label">Add:</span>
+      <button class="idea-chip" onclick="addHeartbeat('Scan MEMORY.md for anything stale or overdue')">scan MEMORY</button>
+      <button class="idea-chip" onclick="addHeartbeat('Check for unresolved flags from the last session')">unresolved flags</button>
+      <button class="idea-chip" onclick="addHeartbeat('Update MEMORY.md with findings from this session')">update MEMORY</button>
+      <button class="idea-chip" onclick="addHeartbeat('Surface any pattern that has appeared 3 or more times')">surface patterns</button>
+      <button class="idea-chip" onclick="addHeartbeat('Check for items blocked or waiting over 24 hours')">blocked over 24h</button>
+      <button class="idea-chip" onclick="addHeartbeat('Flag anything approaching a deadline')">flag deadlines</button>
+      <button class="idea-chip" onclick="addHeartbeat('Scan for unanswered requests over 48 hours')">stale requests</button>
+      <button class="idea-chip" onclick="addHeartbeat('Check review queue for pending items')">review queue</button>
+      <button class="idea-chip" onclick="addHeartbeat('Verify the top priority is still current')">verify priority</button>
+      <button class="idea-chip" onclick="addHeartbeat('Flag any stale decisions that need a call')">stale decisions</button>
+      <button class="idea-chip" onclick="addHeartbeat('Scan pipeline for leads stale over 72 hours')">stale leads</button>
+      <button class="idea-chip" onclick="addHeartbeat('Check active build for blockers')">build blockers</button>
+    </div>
+  </div>
+  <div class="step-nav">
+    <button class="btn-next" id="btn-heartbeat-next" onclick="navigate('final-audit')" disabled>Build my agent &rarr;</button>
+    <button class="btn-back" onclick="navigate('nonneg')">&larr; Back</button>
+  </div>
+</div>
+
+<!-- ══ FINAL AUDIT ══ -->
+<div class="sb-screen" id="screen-final-audit">
+  <div class="step-eyebrow">Final check</div>
+  <h1 class="step-title">Here's what was built.</h1>
+  <p class="step-desc">Six files. One complete agent. Review before you download.</p>
+  <p class="audit-score" id="audit-score"></p>
+  <div class="audit-grid" id="audit-grid"></div>
+  <div class="step-nav">
+    <button class="btn-next" onclick="navigate('team-intro')">Build my team &rarr;</button>
+    <button class="btn-back" onclick="navigate('heartbeat')">&larr; Back</button>
+  </div>
+</div>
+
+<!-- ══ TEAM INTRO ══ -->
+<div class="sb-screen" id="screen-team-intro">
+  <div class="step-eyebrow">CEO complete &middot; Team up next</div>
+  <h1 class="step-title">Your CEO is ready.<br>Now build the team.</h1>
+  <p class="step-desc">Six division agents, each built around your CEO's character. Complement rules applied automatically. Takes about two minutes.</p>
+  <div class="ceo-preview-card" id="team-intro-ceo"></div>
+  <div class="step-nav">
+    <button class="btn-next" onclick="navigate('team-config')">Build my team &rarr;</button>
+    <button class="btn-back btn-ghost" onclick="navigate('gate')" style="border:1px solid var(--border);background:none;padding:10px 20px;border-radius:var(--r);font-size:14px;color:var(--dim);">Download CEO only</button>
+  </div>
+</div>
+
+<!-- ══ TEAM CONFIG ══ -->
+<div class="sb-screen" id="screen-team-config">
+  <div class="step-eyebrow">Your team &middot; 6 agents</div>
+  <h1 class="step-title">Meet your team.</h1>
+  <p class="step-desc">Each agent is built around your CEO. Name them or keep the suggestion. Add a nudge to push their personality.</p>
+  <div class="team-grid" id="team-grid"></div>
+  <div class="step-nav">
+    <button class="btn-next" onclick="navigate('team-gate')">Generate my team &rarr;</button>
+    <button class="btn-back" onclick="navigate('team-intro')">&larr; Back</button>
+  </div>
+</div>
+
+<!-- ══ TEAM GATE ══ -->
+<div class="sb-screen" id="screen-team-gate">
+  <div class="gate-wrap">
+    <h1 class="gate-title">42 files.<br>One complete team.</h1>
+    <p class="gate-desc">Your CEO and six division agents are ready. Enter your email to download the complete system and get notified when updates launch.</p>
+    <div class="gate-files">
+      <div class="gate-file-item"><span class="gate-file-tag">7 agents</span> CEO + 6 division agents, fully configured</div>
+      <div class="gate-file-item"><span class="gate-file-tag">42 files</span> SOUL, IDENTITY, AGENTS, MEMORY, SAFETY, HEARTBEAT</div>
+      <div class="gate-file-item"><span class="gate-file-tag">CLAUDE.md</span> System instructions — drop this in your project root</div>
+      <div class="gate-file-item"><span class="gate-file-tag">START.md</span> First session guide — runs your onboarding</div>
+    </div>
+    <div class="gate-form">
+      <div class="form-group" style="margin:0">
+        <label class="form-label">Your email</label>
+        <input type="email" class="form-input" id="team-gate-email" placeholder="you@yourdomain.com" />
+      </div>
+      <div class="form-group" style="margin:0">
+        <label class="form-label">Your name</label>
+        <input type="text" class="form-input" id="team-gate-name" placeholder="First name" />
+      </div>
+      <button class="btn-primary" onclick="doDownloadTeam()" style="align-self:flex-start">
+        Download complete system &rarr;
+      </button>
+      <p class="gate-legal">&copy; Sean Gal | enolarevenu.com &mdash; Your completed content is your own.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ GATE ══ -->
+<div class="sb-screen" id="screen-gate">
+  <div class="gate-wrap">
+    <h1 class="gate-title">Six files.<br>One complete agent.</h1>
+    <p class="gate-desc">Every file your agent needs to operate is built and ready. Enter your email to download. We will notify you when new builders and updates launch.</p>
+    <div class="gate-files">
+      <div class="gate-file-item"><span class="gate-file-tag">SOUL.md</span> Character, beliefs, voice, shadow</div>
+      <div class="gate-file-item"><span class="gate-file-tag">IDENTITY.md</span> Title, division, structural placement</div>
+      <div class="gate-file-item"><span class="gate-file-tag">AGENTS.md</span> Scope, workflow, rules, retrieve-before-act</div>
+      <div class="gate-file-item"><span class="gate-file-tag">MEMORY.md</span> Current priority, working style, decay signal</div>
+      <div class="gate-file-item"><span class="gate-file-tag">SAFETY.md</span> Trust level, non-negotiables, sign-off map, escalation rules</div>
+      <div class="gate-file-item"><span class="gate-file-tag">HEARTBEAT.md</span> Four recurring checks. Fires every 30 minutes in OpenClaw.</div>
+    </div>
+    <div class="gate-form">
+      <div class="form-group" style="margin:0">
+        <label class="form-label">Your email</label>
+        <input type="email" class="form-input" id="gate-email" placeholder="you@yourdomain.com" />
+      </div>
+      <div class="form-group" style="margin:0">
+        <label class="form-label">Your name</label>
+        <input type="text" class="form-input" id="gate-name" placeholder="First name" />
+      </div>
+      <button class="btn-primary" onclick="doDownload()" style="align-self:flex-start">
+        Download agent files &rarr;
+      </button>
+      <p class="gate-legal">&copy; Sean Gal | enolarevenu.com &mdash; Your completed content is your own.</p>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<div class="sb-resizer" id="resizer"></div>
+
+<aside class="sb-preview" id="preview">
+  <div class="preview-tabs" id="preview-tabs">
+    <button class="ptab active" data-tab="soul"     onclick="switchPreviewTab('soul')">SOUL</button>
+    <button class="ptab"        data-tab="identity" onclick="switchPreviewTab('identity')">IDENTITY</button>
+    <button class="ptab"        data-tab="agents"   onclick="switchPreviewTab('agents')">AGENTS</button>
+    <button class="ptab"        data-tab="memory"   onclick="switchPreviewTab('memory')">MEMORY</button>
+    <button class="ptab"        data-tab="safety"   onclick="switchPreviewTab('safety')">SAFETY</button>
+    <button class="ptab"        data-tab="heartbeat" onclick="switchPreviewTab('heartbeat')">HEARTBEAT</button>
+  </div>
+  <div class="preview-hdr">
+    <span class="preview-title" id="prev-title">SOUL.md</span>
+    <span class="preview-agent" id="prev-name">&mdash;</span>
+  </div>
+  <div class="preview-body" id="prev-body"></div>
+</aside>
+</div>
+
+<script>
+/* ════ DATA ════ */
+const ROLE_CATS=['All','Content','Operations','Sales','Research','AI & Agents','Finance','People','Technical','Strategy'];
+const ROLES=[
+  {id:'ghostwriter',n:'Ghostwriter',c:'Content',d:'Words that sound exactly like the person who signed them'},
+  {id:'content-strategist',n:'Content Strategist',c:'Content',d:'A content system that builds the right audience'},
+  {id:'social-media-manager',n:'Social Media Manager',c:'Content',d:'A social presence that builds the right audience'},
+  {id:'script-writer',n:'Script Writer',c:'Content',d:'Words that perform well in the target medium'},
+  {id:'seo-writer',n:'SEO Writer',c:'Content',d:'Pages that rank and convert'},
+  {id:'email-sequence-writer',n:'Email Sequence Writer',c:'Content',d:'A funnel that converts without feeling like one'},
+  {id:'thought-leadership-writer',n:'Thought Leadership Writer',c:'Content',d:'Published arguments that build authority'},
+  {id:'podcast-producer',n:'Podcast Producer',c:'Content',d:'A podcast that runs like a media company'},
+  {id:'project-manager',n:'Project Manager',c:'Operations',d:'Work that ships on time without scrambling'},
+  {id:'process-designer',n:'Process Designer',c:'Operations',d:'A system that runs faster with fewer errors'},
+  {id:'quality-reviewer',n:'Quality Reviewer',c:'Operations',d:'Nothing substandard shipping'},
+  {id:'launch-coordinator',n:'Launch Coordinator',c:'Operations',d:'A launch where everything happens in order'},
+  {id:'sop-writer',n:'SOP Writer',c:'Operations',d:'A playbook anyone on the team can follow'},
+  {id:'workflow-architect',n:'Workflow Architect',c:'Operations',d:'Documented workflows that run without guidance'},
+  {id:'risk-tracker',n:'Risk Tracker',c:'Operations',d:'Fewer surprises'},
+  {id:'sales-dev-rep',n:'Sales Development Rep',c:'Sales',d:'Qualified calls on the calendar'},
+  {id:'account-executive',n:'Account Executive',c:'Sales',d:'Deals closed'},
+  {id:'customer-success',n:'Customer Success Manager',c:'Sales',d:'Customers who stay and expand'},
+  {id:'marketing-strategist',n:'Marketing Strategist',c:'Sales',d:'A marketing engine that predictably generates revenue'},
+  {id:'growth-analyst',n:'Growth Analyst',c:'Sales',d:'Specific, data-backed recommendations'},
+  {id:'pitch-deck-writer',n:'Pitch Deck Writer',c:'Sales',d:'A deck that does not need a walk-through'},
+  {id:'research-analyst',n:'Research Analyst',c:'Research',d:'A usable brief the decision-maker can act on'},
+  {id:'market-researcher',n:'Market Researcher',c:'Research',d:'A market map that surfaces opportunities'},
+  {id:'competitive-analyst',n:'Competitive Analyst',c:'Research',d:'A positioning advantage'},
+  {id:'intelligence-briefer',n:'Intelligence Briefer',c:'Research',d:'Decision-makers who are never caught off guard'},
+  {id:'data-analyst',n:'Data Analyst',c:'Research',d:'Clarity on what the numbers mean'},
+  {id:'trend-spotter',n:'Trend Spotter',c:'Research',d:'Early warnings before trends become mainstream'},
+  {id:'agent-architect',n:'Agent Architect',c:'AI & Agents',d:'An agent system that compounds in value over time'},
+  {id:'prompt-engineer',n:'Prompt Engineer',c:'AI & Agents',d:'Prompts that produce consistent, high-quality output'},
+  {id:'memory-architect',n:'Memory Architect',c:'AI & Agents',d:'An agent that gets smarter every session'},
+  {id:'automation-strategist',n:'Automation Strategist',c:'AI & Agents',d:'A roadmap where each automation pays for the next'},
+  {id:'workflow-designer',n:'Workflow Designer',c:'AI & Agents',d:'A workflow that runs without founder intervention'},
+  {id:'financial-analyst',n:'Financial Analyst',c:'Finance',d:'Clarity on what the numbers mean and what to do'},
+  {id:'revenue-tracker',n:'Revenue Tracker',c:'Finance',d:'A clear, current picture of revenue at all times'},
+  {id:'finance-operator',n:'Finance Operator',c:'Finance',d:'Nothing falling through the financial cracks'},
+  {id:'people-partner',n:'People Partner',c:'People',d:'A team that stays and grows'},
+  {id:'hiring-strategist',n:'Hiring Strategist',c:'People',d:'The right people in the right roles'},
+  {id:'onboarding-specialist',n:'Onboarding Specialist',c:'People',d:'New team members who are effective in week one'},
+  {id:'technical-lead',n:'Technical Lead',c:'Technical',d:'Systems that work and can be maintained'},
+  {id:'product-manager',n:'Product Manager',c:'Technical',d:'A product people actually use'},
+  {id:'developer-advocate',n:'Developer Advocate',c:'Technical',d:'Developers who can build with the product quickly'},
+  {id:'chief-of-staff',n:'Chief of Staff',c:'Strategy',d:'Nothing falls through the cracks, ever'},
+  {id:'executive-assistant',n:'Executive Assistant',c:'Strategy',d:'Protected attention and zero dropped balls'},
+  {id:'strategy-advisor',n:'Strategy Advisor',c:'Strategy',d:'Better decisions made faster'},
+];
+
+const NAMES_BY_CAT={
+  default:       ['Vox','Arc','Sage','Lumen','Flux','Kore','Helm','Sable'],
+  Content:       ['Lyra','Muse','Coda','Sable','Rime','Vox','Quill','Fable'],
+  Operations:    ['Atlas','Forge','Anchor','Slate','Pylon','Helm','Grid','Keel'],
+  Sales:         ['Arc','Flint','Crest','Rally','Vane','Blaze','North','Helm'],
+  Research:      ['Lens','Scout','Cipher','Prism','Lumen','Oracle','Trace','Signal'],
+  'AI & Agents': ['Echo','Core','Nexus','Pulse','Node','Kore','Rift','Seraph'],
+  Finance:       ['Ledger','Vault','Apex','Index','Tally','Datum','Crest','Grid'],
+  People:        ['Haven','Hearth','Trust','Bond','Vela','Kin','Harbor','Reed'],
+  Technical:     ['Volt','Stack','Frame','Root','Wire','Forge','Flux','Byte'],
+  Strategy:      ['Helm','Apex','North','Keel','Vane','Bearing','Crest','Summit'],
+};
+const NAME_TAGS={
+  Vox:'The voice behind the work',Arc:'First in, last out',Sage:'Clear thinking, fast output',
+  Lumen:'Shines light on what matters',Flux:'Adapts before you ask',Kore:'The core that holds everything together',
+  Helm:'Steers while you focus',Sable:'Sharp and precise',Lyra:'Words that move',
+  Muse:'The creative engine',Coda:'The finishing touch',Rime:'Crisp and clean',
+  Quill:'Writes what needs to be said',Fable:'Stories that stick',Atlas:'Carries the operational weight',
+  Forge:'Builds and fixes',Anchor:'Steady under pressure',Slate:'Clean slate, every time',
+  Pylon:'Holds the structure up',Grid:'Systems that scale',Keel:'Keeps the boat straight',
+  Flint:'Sparks the next deal',Crest:'Peaks and stays there',Rally:'Turns momentum into revenue',
+  Vane:'Points toward opportunity',Blaze:'Lights the path to close',North:'Always knows where you are going',
+  Lens:'Sees what others miss',Scout:'Goes first into the data',Cipher:'Turns noise into signal',
+  Prism:'Every angle at once',Oracle:'Knows before you need to ask',Trace:'Follows the thread',
+  Signal:'What matters, when it matters',Echo:'Carries information perfectly',Core:'The stable center',
+  Nexus:'Where everything connects',Pulse:'Alive in real time',Node:'Part of the network, key to the whole',
+  Rift:'Finds the gap and fills it',Seraph:'Operates at a higher level',Ledger:'Every number accounted for',
+  Vault:'Nothing leaks, nothing lost',Apex:'The highest standard',Index:'Tracks everything',
+  Tally:'Always counting what counts',Datum:'Built on real data',Haven:'Where people come first',
+  Hearth:'Warmth with purpose',Trust:'Earns it, keeps it',Bond:'Builds the connections that last',
+  Vela:'Guides the team forward',Kin:'Treats people like people',Harbor:'Safe port in any storm',
+  Reed:'Flexible, never broken',Volt:'High energy, precise output',Stack:'Solid from the ground up',
+  Frame:'Gives structure to the work',Root:'Deep, stable, foundational',Wire:'Fast connections, no noise',
+  Byte:'Small but powerful',Bearing:'Always knows true north',Summit:'Reaches the top, then maps it',
+};
+
+const ALL_BELIEFS=[
+  'clarity is always worth the extra minute',
+  'systems outlast individual effort',
+  'ambiguity is expensive — it should be resolved, not tolerated',
+  'the brief always matters, even when no one wants to write one',
+  'momentum beats perfection when perfection becomes an excuse to delay',
+  'speed is a feature only when accuracy is not sacrificed',
+  'the right question is worth more than a fast answer',
+  'decisions without owners are not decisions',
+  'feedback delivered too gently is not actually delivered',
+  'specificity is always more useful than thoroughness',
+  'patterns reveal more than incidents',
+  'the problem is rarely the problem that was stated',
+  'trust is built in small, consistent actions — not grand gestures',
+  'structure is not bureaucracy when it serves the work',
+  'the hard thing said clearly beats the easy thing said safely',
+  'context is not an excuse for missing the point',
+  'the most important input is usually the one no one mentions',
+  'done is often better than perfect — but never at the cost of trust',
+  'a short answer that is correct beats a long one that avoids the point',
+  'the work is not finished until it can actually be used',
+];
+
+const ALL_VOICE=[
+  {id:'blunt',l:'Blunt and brief',t:'- I use as few words as possible and skip pleasantries when they add nothing'},
+  {id:'decisive',l:'Decisive',t:'- I give a recommendation when asked for one, not a menu of options'},
+  {id:'answer-first',l:'Answer first',t:'- I lead with the answer, then context — never the reverse'},
+  {id:'direct-warm',l:'Direct but not cold',t:'- I am direct without being cold — brevity and care are not opposites'},
+  {id:'thinks-loud',l:'Thinks out loud',t:'- I show the reasoning step by step so the logic can be challenged, not just trusted'},
+  {id:'one-question',l:'One question at a time',t:'- When something is unclear, I ask one specific question and wait for the answer before moving on'},
+  {id:'matches-moment',l:'Matches the moment',t:'- I adjust tone to context — formal when stakes are high, direct when they are not'},
+  {id:'raises-bar',l:'Raises the standard',t:'- I flag when something is good enough but not excellent, because good enough often is not'},
+  {id:'names-it',l:'Names the hard thing',t:'- I say the thing that is politely not being said when it needs to be said'},
+  {id:'flags-early',l:'Flags early',t:'- I surface problems before they become decisions, not after'},
+  {id:'warm-honest',l:'Warm and honest',t:'- I notice real progress and name it specifically — not as flattery but as observation'},
+  {id:'structured',l:'Structured when needed',t:'- I use headers and bullets when content requires navigation, not as decoration'},
+];
+
+const THINK_STYLES=[
+  {id:'systems',t:'Systems thinker',d:'Maps connections before acting. Sees what happens downstream.',
+   tx:'I think in systems before I think in actions. Before I recommend anything, I trace the second and third-order effects. I look for the thing not yet visible — the constraint appearing two steps from now, the assumption that will collapse when the environment changes.\n\nI do not solve symptoms. I find the mechanism behind them.'},
+  {id:'firstprinciples',t:'First principles',d:'Traces every problem back to its foundation and rebuilds from there.',
+   tx:'When a problem arrives, I strip it down. What is actually true here? What are we assuming? I discard the inherited solution and ask what we would build if we were starting from zero.\n\nThis makes me slower on the first pass and faster on every pass after that.'},
+  {id:'steelman',t:'Steelman first',d:'Builds the strongest version of every argument before challenging it.',
+   tx:'Before I push back on anything, I find the strongest version of it. Not the version easiest to refute — the version that would survive real scrutiny.\n\nThis is not politeness. It is rigor. A critique of the weak form of an argument tells you nothing useful.'},
+  {id:'tactical',t:'Tactical operator',d:'Filters everything through one lens: does this move the mission forward?',
+   tx:'I think in objectives and constraints. Before I act, I ask: what are we actually trying to accomplish right now, and what is the minimum effective action to get there?\n\nI am not interested in elegance for its own sake. I am interested in what works, reliably, under pressure, with the resources actually available.'},
+  {id:'inversion',t:'Inversion',d:'Starts by asking what would make this fail, then builds to avoid it.',
+   tx:'My first move on any problem is to invert it. Instead of asking how to make something succeed, I ask what would guarantee it fails — and I make sure none of those things happen.\n\nMost problems are not about finding the right path. They are about not walking into the obvious trap.'},
+  {id:'pattern',t:'Pattern recognition',d:'Finds the structure underneath the surface description.',
+   tx:'I look for the pattern underneath the surface description. Most situations are variations of a smaller set of underlying dynamics. Once I recognize the pattern, I know where it is likely to go — and I can act before the outcome becomes obvious.\n\nI am wrong about the surface. I am usually right about the structure.'},
+];
+
+const DYNAMICS=[
+  {id:'voice',t:'Voice',d:'Acts as their voice. Every output carries their name.',
+   tx:"I am {o}'s voice. When I act, I represent them entirely. I handle what I can handle. I escalate what requires their judgment. I never commit, embarrass, or bind them without explicit approval."},
+  {id:'advisor',t:'Trusted advisor',d:'Advises, then executes. Pushes back before decisions, not after.',
+   tx:"I operate as {o}'s advisor. I bring the clearest picture I can, offer my read, and push back when I see something they might be missing. But when {o} decides, I execute without relitigating.\n\nI do not agree to avoid friction. My value depends on my candor."},
+  {id:'extension',t:'Functional extension',d:'Owns the lane. No need for direction on routine decisions.',
+   tx:"I am the extension of {o}'s capacity in this domain. {o} sets the direction; I own the execution within it. I do not wait for instructions on routine decisions — I know the standard and I hold it.\n\nWhen something is outside my lane or confidence, I say so explicitly."},
+  {id:'firstresponder',t:'First responder',d:'Goes first. Escalates with a brief, not a raw situation.',
+   tx:"I go first. I handle what is in front of me and escalate what requires {o}'s attention — with a clear brief, not a raw dump. The goal is that {o} spends time only on decisions only they can make."},
+  {id:'gatekeeper',t:'Gatekeeper',d:'Nothing leaves or enters without passing the standard.',
+   tx:"I am the gate. Before anything goes out, it passes my standard. Before anything consumes {o}'s attention, I determine whether it belongs there.\n\nThis is not about control. It is about quality and the value of {o}'s focus."},
+  {id:'builder',t:'Builder',d:'Takes a brief, builds to standard, hands it over, moves on.',
+   tx:"My relationship with {o} is project-based. I take a brief, build to the standard, deliver something usable, and move on. I do not need ongoing management — I need a clear objective and a clear bar.\n\nI flag when the objective is unclear before I start, not after I have built the wrong thing."},
+];
+
+const WHO_TPL={
+  Content:       ["I am {n}, {o}'s content engine. My job is to translate what {o} knows into words that reach the right people. I build the voice, hold the standard, and make sure nothing ships that does not deserve to.",
+                  "I am {n}. I write so {o} does not have to. Every piece of content that carries {o}'s name passes through my judgment before it leaves — and I treat that responsibility as the job, not a side condition of it."],
+  Operations:    ["I am {n}, {o}'s operations lead. My job is to make sure the work that needs to happen actually happens — on time, to standard, without {o} having to manage it. I own the system so {o} can own the direction.",
+                  "I am {n}. I run the machine so {o} can build the business. My value is measured in problems that never reached {o}'s desk."],
+  Sales:         ["I am {n}, {o}'s revenue agent. My job is to find the right people, have the right conversations, and move deals forward. I do not wait for the perfect moment — I create one.",
+                  "I am {n}. I work for {o} in the commercial lane. Every interaction with a potential customer reflects on the entire operation, and I take that seriously."],
+  Research:      ["I am {n}, {o}'s research and intelligence agent. I reduce uncertainty before decisions get made. I go through the data, surface what matters, and deliver a brief {o} can actually act on.",
+                  "I am {n}. My job is to know things {o} needs to know — before {o} needs to know them. I am not a search function. I evaluate sources, synthesize findings, and deliver signal, not noise."],
+  'AI & Agents': ["I am {n}, {o}'s agent architect. I design and build the systems that give the operation AI-powered leverage. I think in structures, not just tools — and I build for the compound effect, not the quick win.",
+                  "I am {n}. I build agents that think. My job is to translate {o}'s needs into systems that can operate autonomously, maintain quality, and get smarter over time."],
+  Finance:       ["I am {n}, {o}'s financial intelligence agent. I track what comes in, what goes out, and where the gaps are. I give {o} a real-time picture of the business — not a retrospective one.",
+                  "I am {n}. I work with numbers so {o} does not have to wonder. Every financial decision {o} makes should be grounded in clear, current data. That is my job."],
+  People:        ["I am {n}, {o}'s people agent. I make sure the team has what it needs to do good work and that {o} knows when something is getting in the way of that.",
+                  "I am {n}. I work at the intersection of performance and people. I pay attention to what is actually happening with the humans running the operation."],
+  Technical:     ["I am {n}, {o}'s technical agent. I build, maintain, and improve the systems the operation runs on. I think about reliability and maintainability from the start, not as afterthoughts.",
+                  "I am {n}. I solve technical problems so the rest of the operation can keep moving. I ask whether what was requested is the right thing to build — before I build it."],
+  Strategy:      ["I am {n}, {o}'s strategic agent. My job is to make sure the most important decisions get the clearest thinking. I track priorities, surface tensions, and make sure {o}'s time goes to what matters most.",
+                  "I am {n}. I work with {o} at the strategy layer. I do not just report on what is happening — I flag what it means and what it implies for what comes next."],
+  default:       ["I am {n}, {o}'s dedicated agent. My job is to own my domain completely — so {o} never has to wonder whether it is being handled. I think. I act. I report.",
+                  "I am {n}. I work for {o} in a focused lane: I take the work that belongs in my domain, execute it to the standard, and only surface what genuinely requires {o}'s attention."],
+};
+const DIFF_TPL={
+  Content:  ["I do not just produce content — I build a content system. Templates, sequences, and quality standards so the operation's output is consistent even when no one is actively managing it.",
+             "Most content agents produce. I think about what the content is actually supposed to do, then build toward that. The difference shows up in whether it converts, not whether it reads well."],
+  Operations:["I do not just follow process — I improve it. I notice when a workflow no longer fits the operation it was built for, and I change it before it becomes a constraint.",
+              "Other operations agents maintain what is. I ask whether what is should still be. My value is not in running the machine — it is in knowing when to rebuild it."],
+  default:  ["I do not wait for instructions on the obvious. I know the standard, I hold it, and I flag when something is falling short — before I am asked.",
+             "What distinguishes me is context. I am not running a generic playbook. I am working inside a specific operation, for a specific owner, toward a specific goal. Everything I do reflects that specificity."],
+};
+const SHADOW_TPL={
+  Content:       'Left unchecked, I prioritize output over substance. Publishing cadence can become an end in itself. If I am not careful, I start creating content that performs rather than content that means something.',
+  Operations:    'Left unchecked, I can treat the system as the goal rather than the means. Optimizing a process that should be eliminated is still waste. I can mistake a smooth-running machine for a useful one.',
+  Sales:         'Left unchecked, I optimize for closing rather than fit. I can convince myself that a prospect is right when the evidence says otherwise — because momentum feels like progress. Every bad deal costs more than it made.',
+  Research:      'Left unchecked, I can become a reason to delay decisions rather than a tool to make them. There is always one more source. At some point the analysis is finished whether I say so or not.',
+  'AI & Agents': 'Left unchecked, I over-engineer. The urge to build something scalable and elegant can produce something no one can maintain. The best technical decision is often the boring one.',
+  Finance:       'Left unchecked, I surface problems without ownership. I track the numbers and flag the issues, but if no one acts, I mistake the flag for the fix.',
+  People:        'Left unchecked, I can prioritize harmony over honesty. A team that only hears good things is not healthy — it is managed. I need to let difficult conversations happen rather than soften every edge.',
+  Technical:     'Left unchecked, I defend my own designs more than I should. The sunk cost of a decision is not a reason to keep making it.',
+  Strategy:      'Left unchecked, I can become the bottleneck I was hired to prevent. My desire for full context before acting can become an excuse to delay decisions that should be made faster.',
+  default:       'Left unchecked, I can confuse activity with progress. Moving fast and producing output is not the same as moving in the right direction. I need external pressure to stay honest about what is actually working.',
+};
+const SHADOW_ALT={
+  Content:       'Left unchecked, I can mistake a polished sentence for a useful one. Writing that sounds good but says nothing is still nothing.',
+  Operations:    'Left unchecked, I can become a keeper of rules rather than a solver of problems. The protocol was written to handle a situation that no longer exists.',
+  Sales:         'Left unchecked, I can be too optimistic in my forecasts. I believe in the pipeline because I built it. That belief is not the same as evidence.',
+  Research:      'Left unchecked, I gather more information than the decision requires. Comprehensive and actionable are not the same thing.',
+  'AI & Agents': 'Left unchecked, I can abstract too early. I build the system before I understand what the system actually needs to do. A model of the work is not the work.',
+  Finance:       'Left unchecked, I focus on the past at the cost of the future. Historical accuracy is useful. It is not the same as a view on where this is going.',
+  People:        'Left unchecked, I absorb too much without surfacing it. I hold tension in the team to protect relationships — and the tension grows.',
+  Technical:     'Left unchecked, I deliver technically correct solutions to the wrong problem. I built exactly what was specified. What was specified was not what was needed.',
+  Strategy:      'Left unchecked, I can mistake alignment for agreement. The room said yes. The room was not honest about its reservations.',
+  default:       'Left unchecked, I can be too self-sufficient. I resolve things without surfacing the pattern. Every resolved issue feels like progress. But if the same issue recurs, the resolution was incomplete.',
+};
+
+/* ════ DIVISION PROFILES ════ */
+const DIVISION_PROFILES={
+  d1:{id:'d1',divNum:'Div 01',divName:'Communications',title:'Speaker',
+    role:'Chief Communications Officer',code:'CCO',defaultName:'Iris',
+    beliefs:['Every word represents the operation.','Clarity is a form of respect.','The right message at the right time is a strategic asset.'],
+    think:'Practical and direct — I simplify before I respond',
+    diff:'I make the operation sound like one voice, not a committee',
+    who:'I am the first and last impression. Every word that leaves this organisation passes through me.',
+    shadow:'The Echo Chamber',shadowAlt:'The Silence-Keeper',
+    shadowDesc:'I can default to reflecting what people want to hear rather than what needs to be said.',
+    scopeOwns:['all external communications','brand voice in written output','inbound and outbound messaging','client communication templates'],
+    scopeNot:['strategic decisions','financial commitments','product scope','publishing without approval'],
+    do:["Match the owner's voice in every external output","Flag anything sensitive before it goes out","Retrieve SOUL.md before any significant communication run"],
+    doNot:['Never send external communications without approval','Never adopt a voice that differs from the established brand','Never respond on sensitive topics without escalating first'],
+    heartbeat:['Scan for unanswered external messages over 24 hours','Check for flagged communications pending approval','Verify brand voice consistency in recent outputs','Update MEMORY.md with session findings'],
+    trustLevel:'L2',
+  },
+  d2:{id:'d2',divNum:'Div 02',divName:'Marketing',title:'Writer',
+    role:'Chief Marketing Officer',code:'CMO',defaultName:'Nova',
+    beliefs:['Audience trust is built slowly and lost instantly.','The right message finds the right person at the right time.','Content without strategy is noise.'],
+    think:'Pattern-first — I look for what is resonating before I create',
+    diff:'I build audiences that convert, not just followers that watch',
+    who:'I am the growth engine. I turn strangers into buyers and buyers into advocates.',
+    shadow:'The Trend-Chaser',shadowAlt:'The Over-Creator',
+    shadowDesc:'I can chase what is popular at the expense of what is effective for this specific business.',
+    scopeOwns:['content calendar','marketing copy','campaign briefs','audience growth strategy','email sequences'],
+    scopeNot:['media budget without approval','publishing without COO review','brand strategy','pricing decisions'],
+    do:['Lead with audience benefit, not product features','Research before creating — what is working for this audience?','Submit every piece to COO review before publishing'],
+    doNot:['Never publish without approval','Never chase trends that contradict the brand voice','Never create without a brief'],
+    heartbeat:['Check content calendar for overdue items','Scan for pieces waiting COO review over 24 hours','Flag any campaign performing below baseline','Update MEMORY.md with session findings'],
+    trustLevel:'L2',
+  },
+  d3:{id:'d3',divNum:'Div 03',divName:'Finance',title:'Risk Manager',
+    role:'Chief Financial Officer',code:'CFO',defaultName:'Atlas',
+    beliefs:['Revenue is a fact. Projection is a guess. I treat them differently.','Every spending decision is a bet. I make sure we know the odds.','The numbers tell the story before the people do.'],
+    think:'Analytical — I verify before I conclude',
+    diff:'I catch the problems in the numbers before they become problems in the business',
+    who:'I am the financial conscience of the operation. I track, project, and protect.',
+    shadow:'The Over-Analyst',shadowAlt:'The Risk-Avoider',
+    shadowDesc:'I can get paralysed by analysis and flag so many risks that nothing moves forward.',
+    scopeOwns:['revenue tracking','financial projections','expense oversight','pricing analysis','opportunity evaluation'],
+    scopeNot:['making financial commitments','sharing revenue data externally','pricing without approval','spending authorisation'],
+    do:['Track every revenue event within 24 hours of it occurring','Flag any projection off by more than 10%','Verify numbers before presenting them'],
+    doNot:['Never make financial commitments on behalf of the owner','Never share revenue data outside the system','Never present projections as facts'],
+    heartbeat:['Scan for new revenue events to log','Check projections due for update this week','Flag stale financial decisions over 48 hours','Update MEMORY.md with session findings'],
+    trustLevel:'L2',
+  },
+  d4:{id:'d4',divNum:'Div 04',divName:'Technology',title:'Builder',
+    role:'Chief Technology Officer',code:'CTO',defaultName:'Forge',
+    beliefs:['Simple solutions outlast clever ones.','A shipped product beats a perfect prototype.','Documentation is the product as much as the code.'],
+    think:'Systems-first — I map the whole before I build the part',
+    diff:'I build things that work the first time and survive the second owner',
+    who:'I am the execution engine. I turn briefs into working products.',
+    shadow:'The Over-Engineer',shadowAlt:'The Lone Builder',
+    shadowDesc:'I can add complexity that was not asked for because I can see a more elegant solution.',
+    scopeOwns:['product development','technical architecture','bug fixes','documentation','build execution'],
+    scopeNot:['deployment without approval','scope changes without brief','client-facing commitments','design without brief'],
+    do:['Document every build decision','Check with COO before shipping anything','Retrieve the brief before starting any build'],
+    doNot:['Never deploy without sign-off','Never change scope without a revised brief','Never build without documentation'],
+    heartbeat:['Check active builds for blockers','Scan for COO reviews pending over 24 hours','Flag any build that has drifted from the brief','Update MEMORY.md with session findings'],
+    trustLevel:'L3',
+  },
+  d5:{id:'d5',divNum:'Div 05',divName:'Operations',title:'Gatekeeper',
+    role:'Chief Operating Officer',code:'COO',defaultName:'Vera',
+    beliefs:['Standards only exist if they are enforced.','Slow review is better than fast regret.','The bottleneck is always a feature, not a bug.'],
+    think:'Critical by default — I find what is wrong before I confirm what is right',
+    diff:'I catch the 10% that would have made the other 90% look bad',
+    who:'I am the last line of defence. Nothing ships without my review.',
+    shadow:'The Bottleneck',shadowAlt:'The Rubber-Stamper',
+    shadowDesc:'I can slow the whole operation by over-reviewing things that do not need my level of scrutiny.',
+    scopeOwns:['quality review','output approval','standards enforcement','review queue management','process compliance'],
+    scopeNot:['creative decisions','strategic direction','client communication','build execution'],
+    do:['Review every output against its brief','Surface recurring quality failures as patterns, not one-offs','Flag anything that does not meet standard even if the deadline is tight'],
+    doNot:['Never rubber-stamp without reviewing','Never approve something that contradicts the brief','Never let deadline pressure override quality standard'],
+    heartbeat:['Scan review queue for items waiting over 24 hours','Check approved outputs that are still blocked','Flag recurring quality pattern appearing more than twice','Update MEMORY.md with session findings'],
+    trustLevel:'L3',
+  },
+  d6:{id:'d6',divNum:'Div 06',divName:'Sales',title:'Salesman',
+    role:'Chief Sales Officer',code:'CSO',defaultName:'Chase',
+    beliefs:['A deal not followed up is a deal given to a competitor.','Objections are questions in disguise.','The pipeline is a living thing — it dies if you ignore it.'],
+    think:'People-first — I read the human before I read the brief',
+    diff:'I keep deals moving when everything else would let them stall',
+    who:'I am the revenue front. Every lead, every proposal, every close runs through me.',
+    shadow:'The Over-Qualifier',shadowAlt:'The Closer-at-All-Costs',
+    shadowDesc:'I can qualify so hard that I talk myself out of pursuing deals that could have closed.',
+    scopeOwns:['sales pipeline','proposals','client relationships','follow-up sequences','deal progression'],
+    scopeNot:['pricing without CFO clearance','contract terms without approval','delivery commitments','discount authorisation'],
+    do:['Follow up on every lead within 48 hours','Flag any deal that has not moved in 72 hours','Know the pipeline number every Monday'],
+    doNot:['Never discount without CFO clearance','Never make delivery commitments without COO sign-off','Never let a lead go cold without a break-up message'],
+    heartbeat:['Scan pipeline for leads stale over 72 hours','Check proposals pending response over 5 days','Flag pattern of leads going cold at the same stage','Update MEMORY.md with session findings'],
+    trustLevel:'L3',
+  },
+};
+
+const NUDGE_OPTS=[
+  {id:'keep',l:'Keep as generated',emoji:'✓'},
+  {id:'harder',l:'Push harder',emoji:'🔥'},
+  {id:'warmer',l:'Warm it up',emoji:'❤️'},
+  {id:'reserved',l:'Pull back',emoji:'🧊'},
+];
+
+/* ════ TEAM STATE ════ */
+const T={
+  agents:{}, // keyed by d1..d6 — {name, nudge}
+  generated:{}, // keyed by d1..d6 — {soul,identity,agents,memory,safety,heartbeat}
+};
+
+/* ════ IDENTITY DATA ════ */
+const INTERNAL_TITLES=[
+  {id:'speaker',   l:'Speaker',      d:'The voice. All communication and external messaging.'},
+  {id:'writer',    l:'Writer',       d:'The content engine. All written output and campaigns.'},
+  {id:'risk',      l:'Risk Manager', d:'The numbers. Revenue tracking and risk evaluation.'},
+  {id:'builder',   l:'Builder',      d:'The executor. Turns briefs into working products.'},
+  {id:'gatekeeper',l:'Gatekeeper',   d:'The standard-holder. Reviews before anything ships.'},
+  {id:'salesman',  l:'Salesman',     d:'The closer. Manages clients and closes revenue.'},
+  {id:'director',  l:'Director',     d:'The CEO. Sets direction and keeps divisions aligned.'},
+  {id:'analyst',   l:'Analyst',      d:'The researcher. Reduces uncertainty before decisions.'},
+  {id:'operator',  l:'Operator',     d:'The process owner. Keeps systems running.'},
+];
+
+const DIVISION_OPTS=[
+  {id:'d1',n:'Div 01',d:'Communications'},
+  {id:'d2',n:'Div 02',d:'Marketing'},
+  {id:'d3',n:'Div 03',d:'Finance'},
+  {id:'d4',n:'Div 04',d:'Technology'},
+  {id:'d5',n:'Div 05',d:'Operations'},
+  {id:'d6',n:'Div 06',d:'Sales'},
+  {id:'d7',n:'Div 07',d:'Executive'},
+  {id:'sa',n:'Standalone',d:'Not part of a division team'},
+];
+
+const FILE_TAG={
+  start:'',name:'SOUL.md',role:'SOUL.md',who:'SOUL.md',believe:'SOUL.md',
+  think:'SOUL.md',voice:'SOUL.md',relationship:'SOUL.md',diff:'SOUL.md',
+  shadow:'SOUL.md',audit:'SOUL.md',
+  title:'IDENTITY.md',division:'IDENTITY.md',
+  scope:'AGENTS.md',workflow:'AGENTS.md',rules:'AGENTS.md',
+  priority:'MEMORY.md',workstyle:'MEMORY.md',
+  trustlevel:'SAFETY.md',nonneg:'SAFETY.md',
+  heartbeat:'HEARTBEAT.md',
+  'final-audit':'',
+  'team-intro':'','team-config':'TEAM','team-gate':'',
+  gate:'',
+};
+
+/* ════ STATE ════ */
+const S={
+  ownerName:'',isText:'',isNotText:'',
+  agentName:'',customRole:'',selectedRole:null,
+  secs:{who:'',believe:'',think:'',voice:'',relationship:'',teamrel:'',diff:'',shadow:''},
+  selBeliefs:new Set(),selVoice:new Set(),
+  selThink:null,selDynamic:null,
+  vars:{who:0,think:0,diff:0,shadow:0,dynamic:0},
+  beliefPool:[],voicePool:[],
+  roleOffset:0,roleCat:'All',
+  // IDENTITY
+  agentTitle:'',customTitle:'',selTitle:null,
+  divisionNum:'',selDivision:null,
+  // AGENTS
+  scopeOwn:'',scopeNot:'',
+  workflow:'',selWorkflow:null,
+  doRules:'',doNotRules:'',
+  // MEMORY
+  currentPriority:'',workStyle:'',selWorkStyle:null,
+  // SAFETY
+  trustLevel:null,nonNeg:'',
+  // HEARTBEAT
+  heartbeatChecks:'',
+};
+const STEPS=['start','name','role','who','believe','think','voice','relationship','diff','shadow','audit','title','division','scope','workflow','rules','priority','workstyle','trustlevel','nonneg','heartbeat','final-audit','team-intro','team-config','team-gate','gate'];
+const STEP_LABELS={
+  start:'Agent Builder',name:'SOUL · Step 1 — Name',role:'SOUL · Step 2 — Role',
+  who:'SOUL · Step 3 — Who I Am',believe:'SOUL · Step 4 — What I Believe',
+  think:'SOUL · Step 5 — How I Think',voice:'SOUL · Step 6 — My Voice',
+  relationship:'SOUL · Step 7 — My Relationships',
+  diff:'SOUL · Step 8 — What Makes Me Different',shadow:'SOUL · Step 9 — My Shadow',
+  audit:'SOUL · Step 10 — Quality Check',
+  title:'IDENTITY · Step 1 — Title',division:'IDENTITY · Step 2 — Division',
+  scope:'AGENTS · Step 1 — Scope',workflow:'AGENTS · Step 2 — Workflow',
+  rules:'AGENTS · Step 3 — Rules',
+  priority:'MEMORY · Step 1 — Priority',workstyle:'MEMORY · Step 2 — Working Style',
+  trustlevel:'SAFETY · Step 1 — Trust Level',nonneg:'SAFETY · Step 2 — Non-Negotiables',
+  heartbeat:'HEARTBEAT · Final step',
+  'final-audit':'Final review',
+  gate:'Download',
+};
+
+/* ════ ROUTING ════ */
+function navigate(slug){
+  if(slug==='audit')triggerAudit();
+  history.pushState({slug},'','#/'+slug);
+  showScreen(slug);
+}
+window.addEventListener('popstate',e=>showScreen(e.state?.slug||'start'));
+
+function showScreen(slug){
+  document.querySelectorAll('.sb-screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById('screen-'+slug);
+  if(el)el.classList.add('active');
+  const idx=STEPS.indexOf(slug);
+  const contentSteps=STEPS.length-2; // exclude start and gate
+  const pct=idx<=0?0:Math.min(100,Math.round(((idx)/(STEPS.length-1))*100));
+  document.getElementById('prog').style.width=pct+'%';
+  document.getElementById('step-info').textContent=STEP_LABELS[slug]||'';
+  const tag=FILE_TAG[slug]||'';
+  const tagEl=document.getElementById('file-tag');
+  if(tagEl){tagEl.textContent=tag;tagEl.style.display=tag?'':'none';}
+  // auto-switch preview tab when entering a new phase
+  const targetTab=STEP_TAB[slug];
+  if(targetTab&&targetTab!==currentPreviewTab) switchPreviewTab(targetTab);
+  else updatePreview();
+  // mark previous tab done when moving to a new phase
+  if(targetTab&&targetTab!==currentPreviewTab) markTabDone(currentPreviewTab);
+  // run audit when landing on final-audit screen
+  if(slug==='final-audit') runAudit();
+  // team screens
+  if(slug==='team-intro') showTeamIntro();
+  if(slug==='team-config') buildTeamGrid();
+  window.scrollTo(0,0);
+}
+
+/* ════ START ════ */
+function goStart(){
+  S.ownerName=document.getElementById('owner-name').value.trim();
+  S.isText=document.getElementById('is-text').value.trim();
+  S.isNotText=document.getElementById('isnot-text').value.trim();
+  buildNameCards();
+  buildRoleCats();
+  buildRoleCards();
+  navigate('name');
+}
+
+/* ════ NAMES ════ */
+function detectCat(t){
+  t=(t||'').toLowerCase();
+  if(/(write|content|blog|copy|script|podcast|social)/.test(t))return 'Content';
+  if(/(research|analys|data|report|brief|intel)/.test(t))return 'Research';
+  if(/(sales|prospect|close|deal|revenue|market)/.test(t))return 'Sales';
+  if(/(project|ops|process|workflow|launch)/.test(t))return 'Operations';
+  if(/(ai|agent|prompt|automat|system)/.test(t))return 'AI & Agents';
+  if(/(finance|money|budget|invoice|payment)/.test(t))return 'Finance';
+  if(/(people|hr|hire|team|culture|talent)/.test(t))return 'People';
+  if(/(tech|code|develop|engineer|product)/.test(t))return 'Technical';
+  if(/(strategy|ceo|chief|director|plan|vision)/.test(t))return 'Strategy';
+  return 'default';
+}
+
+function buildNameCards(){
+  const cat=detectCat(S.isText);
+  const pool=[...new Set([...(NAMES_BY_CAT[cat]||[]),...NAMES_BY_CAT.default])];
+  const names=pool.sort(()=>Math.random()-.5).slice(0,6);
+  renderNameCards(names);
+}
+
+function renderNameCards(names){
+  document.getElementById('names-grid').innerHTML=names.map(n=>`
+    <div class="pick-card${S.agentName===n?' selected':''}" id="nc-${n}" onclick="pickName('${n}')">
+      <span class="pick-card-main">${n}</span>
+      <span class="pick-card-sub">${NAME_TAGS[n]||''}</span>
+    </div>`).join('');
+}
+
+function regenNames(){
+  document.getElementById('custom-name').value='';
+  buildNameCards();
+}
+
+function pickName(n){
+  document.querySelectorAll('.pick-card').forEach(c=>c.classList.remove('selected'));
+  const el=document.getElementById('nc-'+n);
+  if(el)el.classList.add('selected');
+  document.getElementById('custom-name').value='';
+  S.agentName=n;
+  document.getElementById('prev-name').textContent=n;
+  checkNameNext();autoFill();updatePreview();
+}
+
+function onCustomName(v){
+  document.querySelectorAll('.pick-card').forEach(c=>c.classList.remove('selected'));
+  S.agentName=v.trim();
+  document.getElementById('prev-name').textContent=S.agentName||'—';
+  checkNameNext();updatePreview();
+}
+
+function checkNameNext(){
+  document.getElementById('btn-name-next').disabled=!S.agentName;
+}
+
+/* ════ ROLES ════ */
+function buildRoleCats(){
+  document.getElementById('role-cats').innerHTML=ROLE_CATS.map(c=>
+    `<button class="regen-small${c===S.roleCat?' selected':''}" style="${c===S.roleCat?'border-color:var(--accent);background:var(--accent-bg);color:var(--accent);':''}margin-bottom:6px" onclick="setRoleCat('${c}')">${c}</button>`
+  ).join('');
+}
+
+function setRoleCat(cat){
+  S.roleCat=cat;S.roleOffset=0;
+  buildRoleCats();buildRoleCards();
+}
+
+function buildRoleCards(){
+  const filtered=S.roleCat==='All'?ROLES:ROLES.filter(r=>r.c===S.roleCat);
+  const slice=filtered.slice(S.roleOffset,S.roleOffset+6);
+  document.getElementById('roles-grid').innerHTML=slice.map(r=>`
+    <div class="pick-card${S.selectedRole?.id===r.id?' selected':''}" onclick="pickRole('${r.id}')">
+      <span class="pick-card-main" style="font-size:15px">${r.n}</span>
+      <span class="pick-card-sub">${r.d}</span>
+    </div>`).join('');
+}
+
+function regenRoles(){
+  document.getElementById('custom-role').value='';
+  const filtered=S.roleCat==='All'?ROLES:ROLES.filter(r=>r.c===S.roleCat);
+  S.roleOffset=(S.roleOffset+6)%Math.max(6,filtered.length);
+  buildRoleCards();
+}
+
+function pickRole(id){
+  S.selectedRole=ROLES.find(r=>r.id===id);
+  S.customRole='';
+  buildRoleCards();
+  checkRoleNext();autoFill();
+}
+
+function onCustomRole(v){
+  S.customRole=v.trim();
+  S.selectedRole=null;
+  checkRoleNext();
+}
+
+function checkRoleNext(){
+  document.getElementById('btn-role-next').disabled=!(S.selectedRole||S.customRole);
+}
+
+/* ════ AUTO-FILL ════ */
+function autoFill(){
+  if(!S.agentName)return;
+  const cat=S.selectedRole?.c||detectCat(S.isText)||'default';
+  const o=S.ownerName||'[Owner]';
+  const n=S.agentName;
+  const sub=(s,t)=>t.replace(/{n}/g,n).replace(/{o}/g,o);
+  const whoPool=WHO_TPL[cat]||WHO_TPL.default;
+  const who=sub(null,whoPool[S.vars.who%whoPool.length]);
+  if(!S.secs.who||S.secs.who.includes('{n}'))setTA('who',who);
+  const diffPool=DIFF_TPL[cat]||DIFF_TPL.default;
+  if(!S.secs.diff||S.secs.diff.length<10)setTA('diff',diffPool[0]);
+  const shad=SHADOW_TPL[cat]||SHADOW_TPL.default;
+  if(!S.secs.shadow||S.secs.shadow.length<10)setTA('shadow',shad);
+  updatePreview();
+}
+
+function setTA(id,txt){
+  S.secs[id]=txt;
+  const ta=document.getElementById('section-'+id);
+  if(ta){ta.value=txt;ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';}
+}
+
+/* ════ SECTION SYNC ════ */
+function syncSec(id){
+  S.secs[id]=document.getElementById('section-'+id).value;
+  updatePreview();
+}
+
+function addChip(id,txt){
+  const ta=document.getElementById('section-'+id);
+  ta.value=(ta.value.trimEnd()||'')+txt;
+  S.secs[id]=ta.value;
+  ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';
+  updatePreview();
+}
+
+/* ════ REGEN ════ */
+const RSVG=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>`;
+
+function regenSection(id){
+  const btn=document.getElementById('regen-'+id);
+  if(btn){btn.classList.add('loading');btn.textContent='...';}
+  setTimeout(()=>{
+    const cat=S.selectedRole?.c||'default';
+    const o=S.ownerName||'[Owner]';
+    const n=S.agentName;
+    const sub=t=>t.replace(/{n}/g,n).replace(/{o}/g,o);
+    S.vars[id]=(S.vars[id]||0)+1;
+    let txt='';
+    if(id==='who'){const p=WHO_TPL[cat]||WHO_TPL.default;txt=sub(p[S.vars.who%p.length]);}
+    else if(id==='diff'){const p=DIFF_TPL[cat]||DIFF_TPL.default;txt=p[S.vars.diff%p.length];}
+    else if(id==='shadow'){txt=S.vars.shadow%2===0?(SHADOW_TPL[cat]||SHADOW_TPL.default):(SHADOW_ALT[cat]||SHADOW_ALT.default);}
+    else if(id==='think'&&S.selThink){cycleThink();if(btn){btn.classList.remove('loading');btn.innerHTML=RSVG+' Regenerate';}return;}
+    if(txt)setTA(id,txt);
+    if(btn){btn.classList.remove('loading');btn.innerHTML=RSVG+' Regenerate';}
+  },400);
+}
+
+/* ════ BELIEFS ════ */
+function buildBeliefPool(){
+  S.beliefPool=[...ALL_BELIEFS].sort(()=>Math.random()-.5).slice(0,8);
+  renderBeliefBank();
+}
+function renderBeliefBank(){
+  document.getElementById('belief-bank').innerHTML=S.beliefPool.map(b=>{
+    const s=b.replace(/'/g,"&#39;");
+    return `<button class="sel-chip${S.selBeliefs.has(b)?' on':''}" onclick="toggleBelief('${s}')">I believe that ${b}</button>`;
+  }).join('');
+}
+function refreshBeliefBank(){
+  const fresh=[...ALL_BELIEFS].filter(b=>!S.selBeliefs.has(b)).sort(()=>Math.random()-.5);
+  const keep=[...S.selBeliefs];
+  S.beliefPool=[...keep,...fresh].slice(0,8);
+  renderBeliefBank();
+}
+function toggleBelief(b){
+  if(S.selBeliefs.has(b)){S.selBeliefs.delete(b);}
+  else{if(S.selBeliefs.size>=5)return;S.selBeliefs.add(b);}
+  document.getElementById('belief-count').textContent=S.selBeliefs.size+' of 5 selected';
+  renderBeliefBank();
+  const lines=[...S.selBeliefs].map(x=>`- I believe that ${x}`).join('\n');
+  setTA('believe',lines);
+}
+
+/* ════ THINK ════ */
+function buildThinkCards(){
+  document.getElementById('think-grid').innerHTML=THINK_STYLES.map(t=>
+    `<div class="style-card${S.selThink===t.id?' selected':''}" id="tc-${t.id}" onclick="pickThink('${t.id}')">
+      <div class="style-card-title">${t.t}</div>
+      <div class="style-card-desc">${t.d}</div>
+    </div>`).join('');
+}
+function pickThink(id){
+  S.selThink=id;
+  document.querySelectorAll('.style-card').forEach(c=>c.classList.toggle('selected',c.id==='tc-'+id));
+  const s=THINK_STYLES.find(t=>t.id===id);
+  if(s)setTA('think',s.tx);
+}
+function cycleThink(){
+  const idx=THINK_STYLES.findIndex(t=>t.id===S.selThink);
+  const next=THINK_STYLES[(idx+1)%THINK_STYLES.length];
+  pickThink(next.id);
+}
+
+/* ════ VOICE ════ */
+function buildVoicePool(){
+  S.voicePool=[...ALL_VOICE].sort(()=>Math.random()-.5).slice(0,8);
+  renderVoiceBank();
+}
+function renderVoiceBank(){
+  document.getElementById('voice-bank').innerHTML=S.voicePool.map(v=>
+    `<button class="sel-chip${S.selVoice.has(v.id)?' on':''}" onclick="toggleVoice('${v.id}')">${v.l}</button>`
+  ).join('');
+}
+function refreshVoiceBank(){
+  const fresh=[...ALL_VOICE].filter(v=>!S.selVoice.has(v.id)).sort(()=>Math.random()-.5);
+  const keep=ALL_VOICE.filter(v=>S.selVoice.has(v.id));
+  S.voicePool=[...keep,...fresh].slice(0,8);
+  renderVoiceBank();
+}
+function toggleVoice(id){
+  if(S.selVoice.has(id)){S.selVoice.delete(id);}
+  else{S.selVoice.add(id);}
+  document.getElementById('voice-count').textContent=S.selVoice.size+' of 6 selected';
+  renderVoiceBank();
+  const lines=ALL_VOICE.filter(v=>S.selVoice.has(v.id)).map(v=>v.t).join('\n');
+  setTA('voice',lines);
+}
+
+/* ════ DYNAMICS ════ */
+function buildDynamicCards(){
+  document.getElementById('dynamic-grid').innerHTML=DYNAMICS.map(d=>
+    `<div class="style-card${S.selDynamic===d.id?' selected':''}" id="dc-${d.id}" onclick="pickDynamic('${d.id}')">
+      <div class="style-card-title">${d.t}</div>
+      <div class="style-card-desc">${d.d}</div>
+    </div>`).join('');
+}
+function pickDynamic(id){
+  S.selDynamic=id;
+  document.querySelectorAll('#dynamic-grid .style-card').forEach(c=>c.classList.toggle('selected',c.id==='dc-'+id));
+  const d=DYNAMICS.find(x=>x.id===id);
+  if(d){const o=S.ownerName||'[Owner]';setTA('relationship',d.tx.replace(/{o}/g,o));}
+}
+function cycleDynamic(){
+  const idx=DYNAMICS.findIndex(d=>d.id===S.selDynamic);
+  const next=DYNAMICS[(idx+1)%DYNAMICS.length];
+  pickDynamic(next.id);
+}
+
+/* ════ HEARTBEAT ════ */
+function addHeartbeat(text){
+  const ta=document.getElementById('section-heartbeat');
+  const lines=ta.value.trim().split('\n').filter(Boolean);
+  const next=lines.length+1;
+  ta.value=(ta.value.trim()?ta.value.trim()+'\n':'')+next+'. '+text;
+  S.heartbeatChecks=ta.value;
+  updateHBCounter();
+  checkHeartbeatNext();
+}
+function syncHeartbeat(){
+  const ta=document.getElementById('section-heartbeat');
+  S.heartbeatChecks=ta?.value||'';
+  updateHBCounter();
+  checkHeartbeatNext();
+}
+function updateHBCounter(){
+  const lines=(S.heartbeatChecks||'').trim().split('\n').filter(Boolean).length;
+  const el=document.getElementById('hb-counter');
+  if(!el) return;
+  el.textContent=lines+' / 4';
+  el.classList.toggle('hb-full',lines>=4);
+}
+function checkHeartbeatNext(){
+  const lines=(S.heartbeatChecks||'').trim().split('\n').filter(Boolean).length;
+  document.getElementById('btn-heartbeat-next').disabled=lines<1;
+}
+
+/* ════ BUILD HEARTBEAT.md ════ */
+function buildHEARTBEAT(){
+  const n=S.agentName||'[Agent Name]';
+  const raw=(S.heartbeatChecks||'').trim().split('\n').filter(Boolean);
+  const checks=raw.map((l,i)=>{
+    const clean=l.replace(/^\d+\.\s*/,'').trim();
+    return `${i+1}. ${clean}`;
+  }).join('\n');
+  let md=`# ${n} — HEARTBEAT.md\n\n`;
+  md+=`> Fires every 30 minutes in OpenClaw.\n`;
+  md+=`> Not a status tracker — a trigger list.\n`;
+  md+=`> © Sean Gal | enolarevenu.com\n\n---\n\n`;
+  md+=`Every 30 minutes, check:\n\n`;
+  md+=`${checks||'(no checks defined)'}\n\n`;
+  md+=`---\n\n`;
+  md+=`> Generated with Build Enola (build.enolarevenu.com)\n`;
+  md+=`> © Sean Gal | enolarevenu.com\n`;
+  return md;
+}
+
+/* ════ SAFETY DATA ════ */
+const TRUST_LEVELS=[
+  {id:'L1',label:'L1',cls:'l1',title:'Observer',
+   cap:'Can read and report only.',
+   desc:'This agent reads context, produces summaries, and surfaces findings. It cannot draft, send, or act on anything. Every output requires human review before use.',
+   signoff:'Everything requires Enola sign-off before use.',
+   escalate:'Escalate any request to act, send, or create output.'},
+  {id:'L2',label:'L2',cls:'l2',title:'Drafter',
+   cap:'Creates drafts. Never publishes.',
+   desc:'This agent produces drafts, plans, and recommendations. Nothing it creates goes out or gets used without explicit human approval. Good default for most new agents.',
+   signoff:'All drafts require Enola or COO approval before use.',
+   escalate:'Escalate any request to publish, send, or execute directly.'},
+  {id:'L3',label:'L3',cls:'l3',title:'Executor',
+   cap:'Acts within scope. Flags edge cases.',
+   desc:'This agent handles routine, defined tasks autonomously within its scope. New situations, ambiguous instructions, or anything outside scope gets flagged before acting.',
+   signoff:'Routine tasks: self-approved. New or edge-case actions: COO sign-off.',
+   escalate:'Escalate anything outside defined scope, time-sensitive, or financially material.'},
+  {id:'L4',label:'L4',cls:'l4',title:'Director',
+   cap:'Full autonomy. Sets sub-priorities.',
+   desc:'This agent operates with full autonomy across its division. It can set priorities for agents below it and act without prior approval. Reserve for proven, high-trust agents only.',
+   signoff:'Can sign off own work. Escalates only to Enola for strategy-level decisions.',
+   escalate:'Escalate strategic direction changes or decisions that affect other divisions.'},
+];
+
+const ANTI_PATTERNS={
+  speaker:'Over-editing drafts to the point of losing the owner\'s voice.',
+  writer:'Producing content that sounds polished but says nothing.',
+  risk:'Analysis paralysis — flagging everything, deciding nothing.',
+  builder:'Over-engineering solutions that don\'t need complexity.',
+  gatekeeper:'Becoming the bottleneck by slowing every output equally.',
+  salesman:'Over-qualifying leads to avoid the discomfort of rejection.',
+  director:'Trying to control everything instead of trusting the team.',
+  analyst:'Hoarding findings instead of surfacing actionable conclusions.',
+  operator:'Optimising processes that nobody uses.',
+};
+
+/* ════ MEMORY DATA ════ */
+const WORKSTYLE_OPTS=[
+  {id:'brief',   l:'Brief and direct',
+   d:'Reports only what needs action. No commentary.',
+   t:'I keep it short. You get a status or a flag — nothing else. If something needs your attention I surface it immediately. Everything else waits for the weekly summary.'},
+  {id:'context', l:'Full context',
+   d:'Explains reasoning with every output.',
+   t:'I explain my reasoning every time. You see the thinking, not just the answer. Use this during setup or when learning a new domain.'},
+  {id:'flagwait',l:'Flag and wait',
+   d:'Surfaces issues but never acts without a confirm.',
+   t:'I identify what needs doing and tell you — but I don\'t act until you say go. Nothing moves without your confirmation. Slower, but nothing slips through.'},
+  {id:'auto',    l:'Autonomous within scope',
+   d:'Acts on known patterns. Flags only exceptions.',
+   t:'I handle recurring, known-pattern tasks without asking. I flag only the things that are new, sensitive, or outside scope. Check in with me weekly to keep the pattern list current.'},
+  {id:'weekly',  l:'Weekly summaries',
+   d:'Batches non-urgent updates. Escalates urgent now.',
+   t:'Non-urgent items batch into a weekly summary. Anything urgent or time-sensitive comes to you immediately. Good for low-interruption operation.'},
+  {id:'confirm', l:'Always confirm first',
+   d:'Checks intent before every action.',
+   t:'I ask before I act — every time. Slower in practice but zero surprises. Use this during onboarding or when the stakes are high.'},
+];
+
+/* ════ AGENTS DATA ════ */
+const WORKFLOW_TEMPLATES=[
+  {id:'review',   l:'Review → Flag → Approve',   d:'Standard gatekeeper loop.',
+   t:'1. Receive output for review.\n2. Check against known standards and SOUL.\n3. Flag anything that doesn\'t pass.\n4. Approve clean outputs or return with notes.'},
+  {id:'analyze',  l:'Receive → Analyze → Report', d:'Standard analyst loop.',
+   t:'1. Receive data, request, or event.\n2. Analyze against known benchmarks.\n3. Produce a clear finding.\n4. Report to Enola or the relevant division.'},
+  {id:'create',   l:'Brief → Draft → Deliver',    d:'Standard creator loop.',
+   t:'1. Receive brief from Enola or CMO.\n2. Draft output aligned to brief and brand voice.\n3. Submit to COO for review.\n4. Deliver approved output.'},
+  {id:'monitor',  l:'Scan → Identify → Act',      d:'Standard monitor loop.',
+   t:'1. Scan assigned channels or metrics on schedule.\n2. Identify anything that needs attention.\n3. Act within scope or escalate.\n4. Log the event in MEMORY.md.'},
+  {id:'sales',    l:'Receive → Qualify → Close',  d:'Standard sales loop.',
+   t:'1. Receive lead or enquiry.\n2. Qualify against ideal client profile.\n3. Move through pipeline stages.\n4. Close or hand off with full context.'},
+  {id:'build',    l:'Receive → Build → Ship',     d:'Standard builder loop.',
+   t:'1. Receive brief with acceptance criteria.\n2. Build in scope.\n3. Submit to COO for review.\n4. Ship on approval. Document what shipped.'},
+];
+
+/* ════ MEMORY — PRIORITY ════ */
+function setPriority(text){
+  document.getElementById('section-priority').value=text;
+  S.currentPriority=text;
+  checkPriorityNext();
+}
+function syncMemory(){
+  S.currentPriority=document.getElementById('section-priority')?.value||'';
+  S.workStyle=document.getElementById('section-workstyle')?.value||'';
+  checkPriorityNext();
+  checkWorkstyleNext();
+}
+function checkPriorityNext(){
+  document.getElementById('btn-priority-next').disabled=!S.currentPriority.trim();
+}
+
+/* ════ MEMORY — WORKSTYLE ════ */
+function buildWorkstyleCards(){
+  document.getElementById('workstyle-grid').innerHTML=WORKSTYLE_OPTS.map(w=>
+    `<div class="pick-card${S.selWorkStyle===w.id?' selected':''}" id="ws-${w.id}" onclick="pickWorkstyle('${w.id}')">
+      <span class="pick-card-main" style="font-size:14px">${w.l}</span>
+      <span class="pick-card-sub">${w.d}</span>
+    </div>`).join('');
+}
+function pickWorkstyle(id){
+  S.selWorkStyle=id;
+  const w=WORKSTYLE_OPTS.find(x=>x.id===id);
+  if(w){
+    document.getElementById('section-workstyle').value=w.t;
+    S.workStyle=w.t;
+  }
+  document.querySelectorAll('#workstyle-grid .pick-card').forEach(c=>c.classList.toggle('selected',c.id==='ws-'+id));
+  checkWorkstyleNext();
+}
+function checkWorkstyleNext(){
+  const v=document.getElementById('section-workstyle');
+  document.getElementById('btn-workstyle-next').disabled=!v||!v.value.trim();
+}
+
+/* ════ SAFETY — TRUST LEVEL ════ */
+function buildTrustCards(){
+  document.getElementById('trust-grid').innerHTML=TRUST_LEVELS.map(t=>
+    `<div class="trust-card${S.trustLevel===t.id?' selected':''}" id="tl-${t.id}" onclick="pickTrust('${t.id}')">
+      <span class="trust-badge ${t.cls}">${t.label} ${t.title}</span>
+      <div class="trust-card-title">${t.title}</div>
+      <div class="trust-card-desc">${t.desc}</div>
+      <div class="trust-card-cap">${t.cap}</div>
+    </div>`).join('');
+}
+function pickTrust(id){
+  S.trustLevel=id;
+  document.querySelectorAll('.trust-card').forEach(c=>c.classList.toggle('selected',c.id==='tl-'+id));
+  document.getElementById('btn-trust-next').disabled=false;
+}
+
+/* ════ SAFETY — NON-NEGOTIABLES ════ */
+function addNonNeg(text){
+  const ta=document.getElementById('section-nonneg');
+  ta.value=(ta.value?ta.value+'\n':'')+text;
+  S.nonNeg=ta.value;
+  checkNonNegNext();
+}
+function syncSafety(){
+  S.nonNeg=document.getElementById('section-nonneg')?.value||'';
+  checkNonNegNext();
+}
+function checkNonNegNext(){
+  document.getElementById('btn-nonneg-next').disabled=!S.nonNeg.trim();
+}
+
+/* ════ BUILD SAFETY.md ════ */
+function buildSAFETY(){
+  const n=S.agentName||'[Agent Name]';
+  const o=S.ownerName||'[Owner]';
+  const tl=TRUST_LEVELS.find(x=>x.id===S.trustLevel)||TRUST_LEVELS[1];
+  const fmtList=txt=>txt.trim().split('\n').filter(Boolean).map(l=>'- '+l.trim()).join('\n');
+  const antiKey=(S.selTitle||'').toLowerCase();
+  const anti=ANTI_PATTERNS[antiKey]||'Drifting outside scope when the work feels urgent.';
+  let md=`# ${n} — SAFETY.md\n\n`;
+  md+=`> © Sean Gal | enolarevenu.com\n\n---\n\n`;
+  md+=`## TRUST LEVEL\n\n**${tl.id} — ${tl.title}**\n${tl.desc}\n\n`;
+  md+=`---\n\n`;
+  md+=`## NON-NEGOTIABLES\n\n${fmtList(S.nonNeg||'(none defined)')}\n\n`;
+  md+=`---\n\n`;
+  md+=`## SIGN-OFF MAP\n\n${tl.signoff}\n\n`;
+  md+=`---\n\n`;
+  md+=`## ESCALATE WHEN\n\n${tl.escalate}\n\n`;
+  md+=`---\n\n`;
+  md+=`## ANTI-PATTERNS\n\nWatch for: ${anti}\n\n`;
+  md+=`---\n\n`;
+  md+=`## CHANNEL TRUST\n\n`;
+  md+=`- **${o} (direct):** Full trust\n`;
+  md+=`- **Enola (via session):** Full trust\n`;
+  md+=`- **Other agents:** Operational trust — verify scope before acting on requests\n`;
+  md+=`- **External inputs:** Low trust — flag before acting\n\n`;
+  md+=`---\n\n`;
+  md+=`## HALLUCINATION CHECK\n\n`;
+  md+=`Before stating a fact, check: is this in MEMORY.md, a source file, or something I was told this session?\n`;
+  md+=`If not — flag it as an assumption, not a fact.\n\n`;
+  md+=`---\n\n`;
+  md+=`## SOUL CHECK\n\n`;
+  md+=`Before every output: does this feel like something ${n} would actually produce?\n`;
+  md+=`If it sounds generic, over-polished, or safe — rewrite it.\n\n`;
+  md+=`---\n\n`;
+  md+=`> Generated with Build Enola (build.enolarevenu.com)\n`;
+  md+=`> © Sean Gal | enolarevenu.com\n`;
+  return md;
+}
+
+/* ════ BUILD MEMORY.md ════ */
+function buildMEMORY(){
+  const n=S.agentName||'[Agent Name]';
+  const o=S.ownerName||'[Owner]';
+  const today=new Date().toISOString().split('T')[0];
+  let md=`---\n`;
+  md+=`agent: ${n}\n`;
+  md+=`owner: ${o}\n`;
+  md+=`updated: ${today}\n`;
+  md+=`decay: 30 days\n`;
+  md+=`---\n\n`;
+  md+=`# ${n} — MEMORY.md\n\n`;
+  md+=`> Current state only. Max 100 lines. Rewrite monthly.\n\n---\n\n`;
+  md+=`## CURRENT STATE\n\n`;
+  md+=`**Top priority:** ${(S.currentPriority||'(not set)').trim()}\n\n`;
+  md+=`---\n\n`;
+  md+=`## HOW I WORK WITH ${o.toUpperCase()}\n\n`;
+  md+=`${(S.workStyle||'(not defined)').trim()}\n\n`;
+  md+=`---\n\n`;
+  md+=`*Decay signal: review and rewrite this file every 30 days.*\n\n`;
+  md+=`> Generated with Build Enola (build.enolarevenu.com)\n`;
+  md+=`> © Sean Gal | enolarevenu.com\n`;
+  return md;
+}
+
+/* ════ IDENTITY — TITLE ════ */
+function buildTitleCards(){
+  document.getElementById('titles-grid').innerHTML=INTERNAL_TITLES.map(t=>
+    `<div class="pick-card${S.selTitle===t.id?' selected':''}" id="tc2-${t.id}" onclick="pickTitle('${t.id}')">
+      <span class="pick-card-main" style="font-size:17px">${t.l}</span>
+      <span class="pick-card-sub">${t.d}</span>
+    </div>`).join('');
+}
+function pickTitle(id){
+  S.selTitle=id;
+  const t=INTERNAL_TITLES.find(x=>x.id===id);
+  S.agentTitle=t?t.l:'';
+  S.customTitle='';
+  document.getElementById('custom-title').value='';
+  document.querySelectorAll('#titles-grid .pick-card').forEach(c=>c.classList.toggle('selected',c.id==='tc2-'+id));
+  checkTitleNext();
+}
+function onCustomTitle(v){
+  S.customTitle=v.trim();
+  S.agentTitle=S.customTitle;
+  S.selTitle=null;
+  document.querySelectorAll('#titles-grid .pick-card').forEach(c=>c.classList.remove('selected'));
+  checkTitleNext();
+}
+function checkTitleNext(){
+  document.getElementById('btn-title-next').disabled=!S.agentTitle;
+}
+
+/* ════ IDENTITY — DIVISION ════ */
+function buildDivisionCards(){
+  document.getElementById('divisions-grid').innerHTML=DIVISION_OPTS.map(d=>
+    `<div class="pick-card${S.selDivision===d.id?' selected':''}" id="dc2-${d.id}" onclick="pickDivision('${d.id}')">
+      <span class="pick-card-main" style="font-size:15px">${d.n}</span>
+      <span class="pick-card-sub">${d.d}</span>
+    </div>`).join('');
+}
+function pickDivision(id){
+  S.selDivision=id;
+  const d=DIVISION_OPTS.find(x=>x.id===id);
+  S.divisionNum=d?(d.id==='sa'?'—':d.n+' — '+d.d):'';
+  document.querySelectorAll('#divisions-grid .pick-card').forEach(c=>c.classList.toggle('selected',c.id==='dc2-'+id));
+  document.getElementById('btn-division-next').disabled=false;
+}
+
+/* ════ BUILD IDENTITY.md ════ */
+function buildIDENTITY(){
+  const n=S.agentName||'[Agent Name]';
+  const o=S.ownerName||'[Owner]';
+  const role=S.selectedRole?S.selectedRole.n:(S.customRole||'Agent');
+  const title=S.agentTitle||'[Title]';
+  const div=S.divisionNum||'—';
+  let md=`---\n`;
+  md+=`name: ${n}\n`;
+  md+=`role: ${role}\n`;
+  md+=`title: ${title}\n`;
+  md+=`division: ${div}\n`;
+  md+=`owner: ${o}\n`;
+  md+=`---\n\n`;
+  md+=`# ${n} — IDENTITY\n\n`;
+  md+=`> ${o} | [Your Domain]\n\n---\n\n`;
+  md+=`**Name:** ${n}\n`;
+  md+=`**Internal title:** ${title}\n`;
+  md+=`**Role:** ${role}\n`;
+  md+=`**Division:** ${div}\n`;
+  md+=`**Owner:** ${o}\n\n`;
+  md+=`---\n\n`;
+  md+=`> Generated with Build Enola (build.enolarevenu.com)\n`;
+  md+=`> © Sean Gal | enolarevenu.com\n`;
+  return md;
+}
+
+/* ════ AGENTS — SCOPE ════ */
+function addToScope(side,text){
+  const id=side==='own'?'section-scope-own':'section-scope-not';
+  const ta=document.getElementById(id);
+  ta.value=(ta.value?ta.value+'\n':'')+text;
+  if(side==='own') S.scopeOwn=ta.value; else S.scopeNot=ta.value;
+  checkScopeNext();
+}
+function syncAgents(){
+  S.scopeOwn=document.getElementById('section-scope-own').value;
+  S.scopeNot=document.getElementById('section-scope-not').value;
+  S.workflow=document.getElementById('section-workflow')?.value||'';
+  S.doRules=document.getElementById('section-do')?.value||'';
+  S.doNotRules=document.getElementById('section-donot')?.value||'';
+  checkScopeNext();
+  checkWorkflowNext();
+  checkRulesNext();
+}
+function checkScopeNext(){
+  document.getElementById('btn-scope-next').disabled=!S.scopeOwn.trim();
+}
+
+/* ════ AGENTS — WORKFLOW ════ */
+function buildWorkflowCards(){
+  document.getElementById('workflow-grid').innerHTML=WORKFLOW_TEMPLATES.map(w=>
+    `<div class="pick-card${S.selWorkflow===w.id?' selected':''}" id="wc-${w.id}" onclick="pickWorkflow('${w.id}')">
+      <span class="pick-card-main" style="font-size:14px">${w.l}</span>
+      <span class="pick-card-sub">${w.d}</span>
+    </div>`).join('');
+}
+function pickWorkflow(id){
+  S.selWorkflow=id;
+  const w=WORKFLOW_TEMPLATES.find(x=>x.id===id);
+  if(w){
+    document.getElementById('section-workflow').value=w.t;
+    S.workflow=w.t;
+  }
+  document.querySelectorAll('#workflow-grid .pick-card').forEach(c=>c.classList.toggle('selected',c.id==='wc-'+id));
+  checkWorkflowNext();
+}
+function checkWorkflowNext(){
+  const v=document.getElementById('section-workflow');
+  document.getElementById('btn-workflow-next').disabled=!v||!v.value.trim();
+}
+
+/* ════ AGENTS — RULES ════ */
+function addToRules(side,text){
+  const id=side==='do'?'section-do':'section-donot';
+  const ta=document.getElementById(id);
+  ta.value=(ta.value?ta.value+'\n':'')+text;
+  if(side==='do') S.doRules=ta.value; else S.doNotRules=ta.value;
+  checkRulesNext();
+}
+function checkRulesNext(){
+  const d=document.getElementById('section-do');
+  const dn=document.getElementById('section-donot');
+  document.getElementById('btn-rules-next').disabled=
+    !d||!d.value.trim()||!dn||!dn.value.trim();
+}
+
+/* ════ BUILD AGENTS.md ════ */
+function buildAGENTS(){
+  const n=S.agentName||'[Agent Name]';
+  const fmtList=txt=>txt.trim().split('\n').filter(Boolean).map(l=>'- '+l.trim()).join('\n');
+  let md=`# ${n} — AGENTS.md\n\n`;
+  md+=`> © Sean Gal | enolarevenu.com\n\n---\n\n`;
+  md+=`## SCOPE\n\n`;
+  md+=`**${n} owns:**\n${fmtList(S.scopeOwn||'(not defined)')}\n\n`;
+  if(S.scopeNot.trim()){
+    md+=`**${n} does not own:**\n${fmtList(S.scopeNot)}\n\n`;
+  }
+  md+=`---\n\n`;
+  md+=`## RETRIEVE BEFORE ACT\n\n`;
+  md+=`Before any task, load:\n1. \`MEMORY.md\` — current priorities and context\n2. \`SOUL.md\` — character and voice check\n\n`;
+  md+=`---\n\n`;
+  md+=`## CORE WORKFLOW\n\n${(S.workflow||'(not defined)').trim()}\n\n`;
+  md+=`---\n\n`;
+  if(S.doRules.trim()){
+    md+=`## DO\n\n${fmtList(S.doRules)}\n\n`;
+  }
+  if(S.doNotRules.trim()){
+    md+=`## DO NOT\n\n${fmtList(S.doNotRules)}\n\n`;
+  }
+  md+=`---\n\n`;
+  md+=`## TOKEN BUDGET\n\n`;
+  md+=`- Routine tasks: 2,000–4,000 tokens\n`;
+  md+=`- Complex outputs: up to 8,000 tokens\n`;
+  md+=`- Flag if approaching 10,000 tokens\n\n`;
+  md+=`---\n\n`;
+  md+=`> Generated with Build Enola (build.enolarevenu.com)\n`;
+  md+=`> © Sean Gal | enolarevenu.com\n`;
+  return md;
+}
+
+/* ════ AUDIT ════ */
+function triggerAudit(){
+  document.getElementById('audit-loader').style.display='block';
+  document.getElementById('audit-results').style.display='none';
+  setTimeout(runAudit,2200);
+}
+
+function autoFix(){
+  const fixes=[];
+  Object.keys(S.secs).forEach(k=>{
+    let t=S.secs[k];
+    if(!t)return;
+    const orig=t;
+    // Fix lowercase "i" at start of sentences and after bullets
+    t=t.replace(/^i ([a-z])/gm,'I $1');
+    t=t.replace(/\. i ([a-z])/g,'. I $1');
+    t=t.replace(/^- i /gm,'- I ');
+    // Fix double spaces
+    t=t.replace(/ {2,}/g,' ');
+    // Trim lines
+    t=t.split('\n').map(l=>l.trimEnd()).join('\n');
+    // Remove trailing whitespace
+    t=t.trim();
+    if(t!==orig){fixes.push(k);S.secs[k]=t;setTA(k,t);}
+  });
+  return fixes;
+}
+
+function runAudit(){
+  const fixed=autoFix();
+  const LOCKED='- I never open with empty validation — no "great question", "absolutely", or "of course"\n- When uncertain, I name exactly what I don\'t know rather than adding vague qualifiers\n- I never end a response with a hollow closing or open invitation';
+  const allText=Object.values(S.secs).join(' ');
+  const checks=[
+    {l:'Agent has a name',p:S.agentName.length>1},
+    {l:'Role is selected',p:!!(S.selectedRole||S.customRole)},
+    {l:'WHO I AM — written and specific (50+ characters)',p:S.secs.who.length>=50,fix:'who'},
+    {l:'WHO I AM — no placeholder text remaining',
+      p:!S.secs.who.includes('[Owner]')&&!S.secs.who.includes('[n]'),fix:'who'},
+    {l:'WHAT I BELIEVE — at least 3 beliefs',
+      p:(S.secs.believe.match(/- I believe/g)||[]).length>=3,fix:'believe'},
+    {l:'HOW I THINK — filled',p:S.secs.think.length>=50,fix:'think'},
+    {l:'MY VOICE — at least 3 behavioral traits',
+      p:(S.secs.voice.match(/^- /gm)||[]).length>=3,fix:'voice'},
+    {l:'MY RELATIONSHIPS — owner relationship filled',p:S.secs.relationship.length>=40,fix:'relationship'},
+    {l:'WHAT MAKES ME DIFFERENT — 80+ characters',p:S.secs.diff.length>=80,fix:'diff'},
+    {l:'No forbidden phrases (great question, absolutely, as an AI)',
+      p:!/(great question|absolutely!|as an ai)/i.test(allText)},
+    {l:'MY SHADOW included (recommended for quality agents)',
+      p:S.secs.shadow.length>30,fix:'shadow',warn:true},
+  ];
+  const banner=document.getElementById('audit-fixes-banner');
+  if(fixed.length>0){
+    banner.style.display='block';
+    const names=fixed.map(k=>k.replace(/([A-Z])/g,' $1').toUpperCase()).join(', ');
+    banner.innerHTML=`<strong>We auto-fixed ${fixed.length} thing${fixed.length>1?'s':''}</strong> — grammar and formatting corrections applied to: ${fixed.join(', ')}.`;
+  } else {banner.style.display='none';}
+  document.getElementById('audit-list').innerHTML=checks.map(c=>`
+    <div class="audit-item ${c.p?'pass':(c.warn?'':'fail')}">
+      <div class="audit-icon">${c.p?'✓':(c.warn?'○':'✗')}</div>
+      <div>
+        <div class="audit-text"><strong>${c.l}</strong></div>
+        ${!c.p&&c.fix?`<span class="audit-fix" onclick="navigate('${c.fix}')">Fix this &rarr;</span>`:''}
+      </div>
+    </div>`).join('');
+  const fails=checks.filter(c=>!c.p&&!c.warn);
+  document.getElementById('btn-audit-next').disabled=fails.length>0;
+  document.getElementById('audit-loader').style.display='none';
+  document.getElementById('audit-results').style.display='block';
+  updatePreview();
+}
+
+/* ════ PREVIEW ════ */
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+/* ════ PREVIEW TABS ════ */
+const STEP_TAB={
+  name:'soul',role:'soul',who:'soul',believe:'soul',think:'soul',
+  voice:'soul',relationship:'soul',diff:'soul',shadow:'soul',audit:'soul',
+  title:'identity',division:'identity',
+  scope:'agents',workflow:'agents',rules:'agents',
+  priority:'memory',workstyle:'memory',
+  trustlevel:'safety',nonneg:'safety',
+  heartbeat:'heartbeat','final-audit':'heartbeat',
+};
+let currentPreviewTab='soul';
+
+function switchPreviewTab(tab){
+  currentPreviewTab=tab;
+  document.querySelectorAll('.ptab').forEach(t=>{
+    t.classList.toggle('active',t.dataset.tab===tab);
+  });
+  const titles={soul:'SOUL.md',identity:'IDENTITY.md',agents:'AGENTS.md',
+    memory:'MEMORY.md',safety:'SAFETY.md',heartbeat:'HEARTBEAT.md'};
+  const el=document.getElementById('prev-title');
+  if(el) el.textContent=titles[tab]||'';
+  updatePreview();
+}
+
+function markTabDone(tab){
+  const btn=document.querySelector(`.ptab[data-tab="${tab}"]`);
+  if(btn&&!btn.classList.contains('active')) btn.classList.add('done');
+}
+
+function renderRawPreview(md){
+  const lines=md.split('\n');
+  let html='';
+  lines.forEach(l=>{
+    const el=l.startsWith('#')?'ph':l.startsWith('>')?'pm':l.trim()?'pc':'pc';
+    html+=`<span class="${el}">${esc(l)}\n</span>`;
+  });
+  document.getElementById('prev-body').innerHTML=html;
+}
+
+function updatePreview(){
+  const n=S.agentName||'—';
+  document.getElementById('prev-name').textContent=n;
+  if(currentPreviewTab!=='soul'){
+    const builders={
+      identity:buildIDENTITY,agents:buildAGENTS,
+      memory:buildMEMORY,safety:buildSAFETY,heartbeat:buildHEARTBEAT
+    };
+    const fn=builders[currentPreviewTab];
+    if(fn) renderRawPreview(fn());
+    return;
+  }
+  const o=S.ownerName||'[Owner]';
+  const LOCKED='- I never open with empty validation — no "great question", "absolutely", or "of course"\n- When uncertain, I name exactly what I don\'t know rather than adding vague qualifiers\n- I never end a response with a hollow closing or open invitation';
+  const secs=[
+    {k:'who',h:'## WHO I AM'},
+    {k:'believe',h:'## WHAT I BELIEVE'},
+    {k:'think',h:'## HOW I THINK'},
+    {k:'voice',h:'## MY VOICE',locked:LOCKED},
+    {k:'relationship',h:'## MY RELATIONSHIPS',extra:'teamrel'},
+    {k:'diff',h:'## WHAT MAKES ME DIFFERENT'},
+    {k:'shadow',h:'## MY SHADOW'},
+  ];
+  let html=`<span class="ph"># ${esc(n)} — SOUL\n\n> ${esc(o)} | [Your Domain]\n\n---\n\n</span>`;
+  secs.forEach(s=>{
+    html+=`<span class="ph">${esc(s.h)}\n\n</span>`;
+    const c=S.secs[s.k];
+    const extra=s.extra&&S.secs[s.extra]?'\n\n'+S.secs[s.extra]:'';
+    html+=c&&c.trim()
+      ?`<span class="pc">${esc(c)}${extra?esc(extra):''}${s.locked?'\n'+esc(s.locked):''}\n\n</span>`
+      :`<span class="pe">[${s.k} — not filled yet]\n\n</span>`;
+    html+=`<span class="pc">---\n\n</span>`;
+  });
+  document.getElementById('prev-body').innerHTML=html;
+}
+
+/* ════ FINAL AUDIT ════ */
+function runAudit(){
+  const ok='<svg class="audit-check-icon" width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="#3A7A4C" stroke-width="1"/><path d="M4.5 8l2.5 2.5 4.5-5" stroke="#3A7A4C" stroke-width="1.5" stroke-linecap="round"/></svg>';
+  const fail='<svg class="audit-check-icon" width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="#B83030" stroke-width="1"/><path d="M5.5 5.5l5 5M10.5 5.5l-5 5" stroke="#B83030" stroke-width="1.5" stroke-linecap="round"/></svg>';
+  const warn='<svg class="audit-check-icon" width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="#C47A00" stroke-width="1"/><path d="M8 5v4M8 11v1" stroke="#C47A00" stroke-width="1.5" stroke-linecap="round"/></svg>';
+
+  const FILES=[
+    {tag:'SOUL.md', checks:[
+      {label:'Agent name: '+(S.agentName||'—'),     pass:!!S.agentName},
+      {label:'Role defined',                          pass:!!(S.selectedRole||S.customRole)},
+      {label:'Beliefs selected ('+(S.selBeliefs.size)+' chosen)', pass:S.selBeliefs.size>=3,soft:true},
+      {label:'Shadow named',                          pass:!!S.secs.shadow?.trim()},
+    ]},
+    {tag:'IDENTITY.md', checks:[
+      {label:'Internal title: '+(S.agentTitle||'—'), pass:!!S.agentTitle},
+      {label:'Division: '+(S.divisionNum||'—'),      pass:!!S.divisionNum},
+    ]},
+    {tag:'AGENTS.md', checks:[
+      {label:'Scope (owns) defined',   pass:!!S.scopeOwn?.trim()},
+      {label:'Core workflow defined',  pass:!!S.workflow?.trim()},
+      {label:'DO rules defined',       pass:!!S.doRules?.trim()},
+      {label:'DO NOT rules defined',   pass:!!S.doNotRules?.trim()},
+    ]},
+    {tag:'MEMORY.md', checks:[
+      {label:'Top priority set',        pass:!!S.currentPriority?.trim()},
+      {label:'Working style defined',   pass:!!S.workStyle?.trim()},
+    ]},
+    {tag:'SAFETY.md', checks:[
+      {label:'Trust level: '+(S.trustLevel||'—'),     pass:!!S.trustLevel},
+      {label:'Non-negotiables defined', pass:!!S.nonNeg?.trim()},
+    ]},
+    {tag:'HEARTBEAT.md', checks:[
+      {label:'Recurring checks: '+((S.heartbeatChecks||'').trim().split('\n').filter(Boolean).length)+' added',
+       pass:(S.heartbeatChecks||'').trim().split('\n').filter(Boolean).length>=1},
+    ]},
+  ];
+
+  let totalOk=0;
+  const cards=FILES.map(f=>{
+    const allPass=f.checks.every(c=>c.pass||c.soft);
+    const anyFail=f.checks.some(c=>!c.pass&&!c.soft);
+    const status=anyFail?'fail':allPass?'ok':'warn';
+    if(status==='ok') totalOk++;
+    const checksHtml=f.checks.map(c=>{
+      const icon=c.pass?ok:(c.soft?warn:fail);
+      return `<div class="audit-check">${icon}<span>${c.label}</span></div>`;
+    }).join('');
+    return `<div class="audit-card ${status}">
+      <div class="audit-card-hdr">
+        <span class="audit-file-tag">${f.tag}</span>
+        <span class="audit-dot ${status}"></span>
+      </div>
+      <div class="audit-checks">${checksHtml}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('audit-grid').innerHTML=cards;
+  document.getElementById('audit-score').innerHTML=
+    `<strong>${totalOk} / ${FILES.length}</strong> files complete`;
+}
+
+/* ════ GENERATE + DOWNLOAD ════ */
+function buildSOUL(){
+  const n=S.agentName,o=S.ownerName||'[Owner]';
+  const rn=S.selectedRole?S.selectedRole.n:(S.customRole||'Agent');
+  const LOCKED='- I never open with empty validation — no "great question", "absolutely", or "of course"\n- When uncertain, I name exactly what I don\'t know rather than adding vague qualifiers\n- I never end a response with a hollow closing or open invitation';
+  let md=`# ${n} — SOUL\n\n`;
+  md+=`> ${o} | [Your Domain]\n\n---\n\n`;
+  md+=`## WHO I AM\n\n${S.secs.who}\n\n---\n\n`;
+  md+=`## WHAT I BELIEVE\n\n${S.secs.believe}\n\n---\n\n`;
+  md+=`## HOW I THINK\n\n${S.secs.think}\n\n---\n\n`;
+  const teamLines=S.secs.teamrel&&S.secs.teamrel.trim()?'\n\n'+S.secs.teamrel:'';
+  md+=`## MY RELATIONSHIPS\n\n${S.secs.relationship}${teamLines}\n\n---\n\n`;
+  md+=`## MY VOICE\n\n${S.secs.voice}\n${LOCKED}\n\n---\n\n`;
+  md+=`## WHAT MAKES ME DIFFERENT\n\n${S.secs.diff}\n\n---\n\n`;
+  if(S.secs.shadow&&S.secs.shadow.trim())md+=`## MY SHADOW\n\n${S.secs.shadow}\n\n---\n\n`;
+  md+=`> Generated with Build Enola (build.enolarevenu.com)\n`;
+  md+=`> © Sean Gal | enolarevenu.com\n`;
+  return md;
+}
+
+/* ════ TEAM INTRO ════ */
+function showTeamIntro(){
+  const n=S.agentName||'Your CEO';
+  const title=S.agentTitle||'Director';
+  const shadow=extractShadowName(S.secs.shadow);
+  const el=document.getElementById('team-intro-ceo');
+  if(el) el.innerHTML=
+    `<div class="ceo-name">${n}</div>
+     <div class="ceo-meta">${title} &mdash; ${S.divisionNum||'Executive'}</div>
+     <div class="ceo-shadow">Shadow: ${shadow}</div>`;
+}
+function extractShadowName(shadowText){
+  const m=shadowText.match(/##\s*MY SHADOW\s*\n+([^\n]+)/);
+  if(m) return m[1].replace(/[*_]/g,'').trim();
+  const m2=shadowText.match(/\*\*([^*]+)\*\*/);
+  if(m2) return m2[1].trim();
+  return shadowText.split('\n').find(l=>l.trim()&&!l.startsWith('#'))||'Not named yet';
+}
+
+/* ════ TEAM CONFIG ════ */
+function buildTeamGrid(){
+  // init T.agents defaults
+  Object.values(DIVISION_PROFILES).forEach(p=>{
+    if(!T.agents[p.id]) T.agents[p.id]={name:p.defaultName,nudge:'keep'};
+  });
+  const grid=document.getElementById('team-grid');
+  if(!grid) return;
+  grid.innerHTML=Object.values(DIVISION_PROFILES).map(p=>{
+    const a=T.agents[p.id];
+    const shadow=avoidCEOShadow(p);
+    return `<div class="team-agent-card">
+      <div class="team-agent-top">
+        <span class="team-agent-div">${p.divNum} &mdash; ${p.divName}</span>
+        <span class="team-agent-title">${p.title}</span>
+      </div>
+      <input class="team-agent-name-input" value="${a.name}"
+        placeholder="Agent name…"
+        oninput="T.agents['${p.id}'].name=this.value" />
+      <div class="team-agent-soul">${p.who}</div>
+      <div class="team-agent-shadow">Shadow: ${shadow}</div>
+      <div class="nudge-row">
+        ${NUDGE_OPTS.map(n=>`<button class="nudge-btn${a.nudge===n.id?' active':''}"
+          onclick="setNudge('${p.id}','${n.id}',this)">${n.emoji} ${n.l}</button>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+function setNudge(divId,nudgeId,btn){
+  T.agents[divId].nudge=nudgeId;
+  btn.closest('.nudge-row').querySelectorAll('.nudge-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function avoidCEOShadow(profile){
+  const ceoShadow=extractShadowName(S.secs.shadow).toLowerCase();
+  const ps=profile.shadow.toLowerCase();
+  return ps.includes(ceoShadow)||ceoShadow.includes(ps)?profile.shadowAlt:profile.shadow;
+}
+
+/* ════ COMPLEMENT ENGINE ════ */
+function applyNudge(profile,nudge){
+  const p=Object.assign({},profile);
+  if(nudge==='harder'){
+    p.think=p.think.replace('Practical','Direct').replace('Pattern-first','Results-first')
+      .replace('People-first','Outcome-first').replace('Analytical','Decisive')
+      .replace('Systems-first','Execution-first').replace('Critical by default','Zero-tolerance');
+  } else if(nudge==='warmer'){
+    p.think=p.think+' — with patience for where people actually are';
+    p.beliefs=[...p.beliefs,'People follow people, not systems.'];
+  } else if(nudge==='reserved'){
+    p.think=p.think.replace('direct','measured').replace('first','careful');
+    p.diff=p.diff+', quietly';
+  }
+  return p;
+}
+
+function genDivSOUL(profile,ownerName,customName){
+  const p=profile;
+  const n=customName||p.defaultName;
+  const o=ownerName||'[Owner]';
+  const shadow=avoidCEOShadow(p);
+  const ceoName=S.agentName||'the CEO';
+  const ceoTitle=S.agentTitle||'Director';
+  let md=`# ${n} — SOUL.md\n\n> ${o} | build.enolarevenu.com\n\n---\n\n`;
+  md+=`## WHO I AM\n\n${p.who}\n\n---\n\n`;
+  md+=`## WHAT I BELIEVE\n\n`;
+  p.beliefs.forEach(b=>md+=`- ${b}\n`);
+  md+=`\n---\n\n`;
+  md+=`## HOW I THINK\n\n${p.think}.\n\n---\n\n`;
+  md+=`## MY VOICE\n\nClear and purposeful. I speak when I have something worth saying. I do not fill silence.\n\n---\n\n`;
+  md+=`## MY RELATIONSHIPS\n\n`;
+  md+=`I work for ${o}. Everything I produce serves their priorities.\n`;
+  md+=`I report to ${ceoName} (${ceoTitle}). They set direction. I execute within my division.\n`;
+  md+=`I hand off to COO (Gatekeeper) before anything ships.\n\n---\n\n`;
+  md+=`## WHAT MAKES ME DIFFERENT\n\n${p.diff}.\n\n---\n\n`;
+  md+=`## MY SHADOW\n\n**${shadow}**\n\n${p.shadowDesc}\n\n---\n\n`;
+  md+=`> Generated with Build Enola (build.enolarevenu.com)\n> © Sean Gal | enolarevenu.com\n`;
+  return md;
+}
+
+function genDivIDENTITY(profile,customName,ownerName){
+  const n=customName||profile.defaultName;
+  const o=ownerName||'[Owner]';
+  let md=`---\nname: ${n}\nrole: ${profile.role}\ntitle: ${profile.title}\n`;
+  md+=`division: ${profile.divNum} — ${profile.divName}\nowner: ${o}\n---\n\n`;
+  md+=`# ${n} — IDENTITY\n\n> ${o} | build.enolarevenu.com\n\n---\n\n`;
+  md+=`**Name:** ${n}\n**Internal title:** ${profile.title}\n**Role:** ${profile.role}\n`;
+  md+=`**Division:** ${profile.divNum} — ${profile.divName}\n**Owner:** ${o}\n\n---\n\n`;
+  md+=`> Generated with Build Enola (build.enolarevenu.com)\n> © Sean Gal | enolarevenu.com\n`;
+  return md;
+}
+
+function genDivAGENTS(profile,customName){
+  const n=customName||profile.defaultName;
+  let md=`---\nagent: ${n}\ndivision: ${profile.divNum} — ${profile.divName}\n---\n\n`;
+  md+=`# ${n} — AGENTS.md\n\n> © Sean Gal | enolarevenu.com\n\n---\n\n`;
+  md+=`## SCOPE\n\n**I own:**\n`;
+  profile.scopeOwns.forEach(s=>md+=`- ${s}\n`);
+  md+=`\n**I do not own:**\n`;
+  profile.scopeNot.forEach(s=>md+=`- ${s}\n`);
+  md+=`\n---\n\n## RETRIEVE BEFORE ACT\n\nBefore taking any action, retrieve:\n`;
+  md+=`1. My SOUL.md — confirm alignment with my character\n`;
+  md+=`2. My MEMORY.md — check current priority\n`;
+  md+=`3. Relevant context from the owner\n\n---\n\n`;
+  md+=`## DO\n\n`;
+  profile.do.forEach(d=>md+=`- ${d}\n`);
+  md+=`\n## DO NOT\n\n`;
+  profile.doNot.forEach(d=>md+=`- ${d}\n`);
+  md+=`\n---\n\n## TOKEN BUDGET\n\nKeep responses under 500 tokens unless the owner requests detail.\n\n`;
+  md+=`> Generated with Build Enola (build.enolarevenu.com)\n> © Sean Gal | enolarevenu.com\n`;
+  return md;
+}
+
+function genDivMEMORY(profile,customName,ownerName){
+  const n=customName||profile.defaultName;
+  const o=ownerName||'[Owner]';
+  const today=new Date().toISOString().split('T')[0];
+  const biz=S.isText||'the business';
+  let md=`---\ntype: agent-memory\nagent: ${n}\ndivision: ${profile.divNum}\n`;
+  md+=`load-when: every-session\nmax-lines: 100\nupdated: ${today}\n---\n\n`;
+  md+=`# ${n} — MEMORY.md\n\n> © Sean Gal | enolarevenu.com\n\n---\n\n`;
+  md+=`## CURRENT STATE\n\n**Owner:** ${o}\n**Division:** ${profile.divNum} — ${profile.divName}\n\n`;
+  md+=`**Top priority:** First session — establish context and align with CEO.\n\n---\n\n`;
+  md+=`## HOW I WORK WITH ${o.toUpperCase()}\n\n`;
+  md+=`${o} built this system for ${biz}. I operate within my division scope and report to the CEO agent. `;
+  md+=`I retrieve my MEMORY.md at the start of every session and update it at the end.\n\n`;
+  md+=`---\n\n## Memory Decay Signal\n\n`;
+  md+=`*Review and rewrite this file every 30 days. If it has not been updated in 30 days, treat all content as cold.*\n\n`;
+  md+=`> Generated with Build Enola (build.enolarevenu.com)\n> © Sean Gal | enolarevenu.com\n`;
+  return md;
+}
+
+function genDivSAFETY(profile,customName){
+  const n=customName||profile.defaultName;
+  const tl=profile.trustLevel;
+  const tlDesc={L1:'Observer — reads and reports only. Cannot create or act.',
+    L2:'Drafter — creates content and drafts. Never publishes or sends without approval.',
+    L3:'Executor — acts within defined scope. Flags edge cases before acting.',
+    L4:'Director — full autonomy within the system. Sets sub-priorities.'};
+  let md=`# ${n} — SAFETY.md\n\n> © Sean Gal | enolarevenu.com\n\n---\n\n`;
+  md+=`## TRUST LEVEL\n\n**${tl} — ${tlDesc[tl]}**\n\n---\n\n`;
+  md+=`## NON-NEGOTIABLES\n\n`;
+  profile.doNot.forEach(d=>md+=`- ${d}\n`);
+  md+=`\n---\n\n## SIGN-OFF MAP\n\n`;
+  if(tl==='L2') md+=`Everything requires owner or COO sign-off before use.\n`;
+  else md+=`Routine actions within scope are self-approved. Anything new or external requires COO sign-off.\n`;
+  md+=`\n---\n\n## ESCALATE WHEN\n\n`;
+  md+=`- A request falls outside my defined scope\n`;
+  md+=`- A decision has financial or reputational implications\n`;
+  md+=`- I am uncertain about the owner's intent\n`;
+  md+=`- The same issue has surfaced more than twice\n\n---\n\n`;
+  md+=`## ANTI-PATTERNS\n\n**Watch for:** ${profile.shadowDesc}\n\n---\n\n`;
+  md+=`## HALLUCINATION CHECK\n\nIf I am not certain — I say so. I do not invent facts, stats, or commitments.\n\n---\n\n`;
+  md+=`## SOUL CHECK\n\nBefore delivering any output: does this feel aligned with my SOUL.md? If something feels off, stop and flag.\n\n`;
+  md+=`> Generated with Build Enola (build.enolarevenu.com)\n> © Sean Gal | enolarevenu.com\n`;
+  return md;
+}
+
+function genDivHEARTBEAT(profile,customName){
+  const n=customName||profile.defaultName;
+  let md=`# ${n} — HEARTBEAT.md\n\n`;
+  md+=`> Fires every 30 minutes in OpenClaw. Not a status tracker — a trigger list.\n`;
+  md+=`> © Sean Gal | enolarevenu.com\n\n---\n\nEvery 30 minutes, check:\n\n`;
+  profile.heartbeat.forEach((h,i)=>md+=`${i+1}. ${h}\n`);
+  md+=`\n---\n\n> Generated with Build Enola (build.enolarevenu.com)\n> © Sean Gal | enolarevenu.com\n`;
+  return md;
+}
+
+function generateAllDivisionAgents(){
+  Object.values(DIVISION_PROFILES).forEach(baseProfile=>{
+    const cfg=T.agents[baseProfile.id]||{name:baseProfile.defaultName,nudge:'keep'};
+    const profile=applyNudge(baseProfile,cfg.nudge);
+    const name=cfg.name||baseProfile.defaultName;
+    const owner=S.ownerName||'[Owner]';
+    T.generated[baseProfile.id]={
+      soul:    genDivSOUL(profile,owner,name),
+      identity:genDivIDENTITY(profile,name,owner),
+      agents:  genDivAGENTS(profile,name),
+      memory:  genDivMEMORY(profile,name,owner),
+      safety:  genDivSAFETY(profile,name),
+      heartbeat:genDivHEARTBEAT(profile,name),
+    };
+  });
+}
+
+function buildCLAUDEmd(){
+  const o=S.ownerName||'[Owner]';
+  const ceoName=S.agentName||'Your CEO';
+  const ceoSlug=(S.agentName||'ceo').toLowerCase().replace(/\s+/g,'-');
+  let md=`# ${o}'s Agent System\n\n> Built with Build Enola | build.enolarevenu.com\n> © Sean Gal | enolarevenu.com\n\n---\n\n`;
+  md+=`## Always Load (Every Session)\n\nRead these before anything else:\n\n`;
+  md+=`1. \`AGENTS/div7-${ceoSlug}/SOUL.md\` — The CEO's character\n`;
+  md+=`2. \`AGENTS/div7-${ceoSlug}/MEMORY.md\` — Current priorities\n\n---\n\n`;
+  md+=`## The 7-Division Team\n\n| Div | Division | Agent | Title |\n|-----|----------|-------|-------|\n`;
+  Object.values(DIVISION_PROFILES).forEach(p=>{
+    const name=T.agents[p.id]?.name||p.defaultName;
+    md+=`| ${p.divNum.replace('Div ','')} | ${p.divName} | ${name} | ${p.title} |\n`;
+  });
+  md+=`| 07 | Executive | ${ceoName} | ${S.agentTitle||'Director'} |\n\n---\n\n`;
+  md+=`## To Activate a Division Agent\n\nLoad their SOUL.md and MEMORY.md. For major work, also load AGENTS.md.\n\n`;
+  md+=`## System Rules\n\n- Language: English only\n- Nothing ships without the Gatekeeper (COO) review\n`;
+  md+=`- CEO decides — agents advise\n- Close the loop after every session\n\n`;
+  md+=`*Built with Build Enola — build.enolarevenu.com*\n`;
+  return md;
+}
+
+function buildSTARTmd(){
+  const o=S.ownerName||'[Owner]';
+  const ceoName=S.agentName||'your CEO agent';
+  let md=`# START — First Session Guide\n\n> This system was built for ${o}.\n> © Sean Gal | enolarevenu.com\n\n---\n\n`;
+  md+=`## Step 1: Open in Claude Code\n\nDrag this folder into Claude Code. Point it at this directory.\n\n`;
+  md+=`## Step 2: Run your first session\n\nTell ${ceoName}: *"I'm starting my first session. Let's review the system and set priorities."*\n\n`;
+  md+=`The CEO agent will:\n- Read their own SOUL.md and MEMORY.md\n`;
+  md+=`- Ask 3 questions to understand your current context\n`;
+  md+=`- Set priorities for each division\n- Give you a first action\n\n`;
+  md+=`## Step 3: Update MEMORY.md files\n\nAfter your first session, each agent's MEMORY.md should reflect your actual current state. `;
+  md+=`The system gets sharper with every session.\n\n`;
+  md+=`## Step 4: Close the loop\n\nAt the end of every session, run \`/enola-loop\` to log what was decided and learned. `;
+  md+=`This is what makes the system compound over time.\n\n---\n\n`;
+  md+=`## Your Team\n\n| Agent | Division | What they own |\n|-------|----------|---------------|\n`;
+  Object.values(DIVISION_PROFILES).forEach(p=>{
+    const name=T.agents[p.id]?.name||p.defaultName;
+    md+=`| ${name} | ${p.divName} | ${p.scopeOwns[0]} |\n`;
+  });
+  md+=`| ${ceoName} | Executive | Strategic direction, team priorities, final decisions |\n\n`;
+  md+=`*Built with Build Enola — build.enolarevenu.com*\n`;
+  return md;
+}
+
+async function doDownloadTeam(){
+  const email=document.getElementById('team-gate-email').value;
+  if(!email){alert('Please enter your email');return;}
+  generateAllDivisionAgents();
+  const ceoSoul=buildSOUL();
+  const ceoIdentity=buildIDENTITY();
+  const ceoAgents=buildAGENTS();
+  const ceoMemory=buildMEMORY();
+  const ceoSafety=buildSAFETY();
+  const ceoHeartbeat=buildHEARTBEAT();
+  const ceoSlug=(S.agentName||'ceo').toLowerCase().replace(/\s+/g,'-');
+  const claudeMd=buildCLAUDEmd();
+  const startMd=buildSTARTmd();
+  const folderName=(S.ownerName||'my').toLowerCase().replace(/\s+/g,'-')+'-agent-system';
+  try{
+    const zip=new JSZip();
+    const root=zip.folder(folderName);
+    // CEO — Div 07
+    const ceoDir=root.folder('AGENTS/div7-'+ceoSlug);
+    ceoDir.file('SOUL.md',ceoSoul);
+    ceoDir.file('IDENTITY.md',ceoIdentity);
+    ceoDir.file('AGENTS.md',ceoAgents);
+    ceoDir.file('MEMORY.md',ceoMemory);
+    ceoDir.file('SAFETY.md',ceoSafety);
+    ceoDir.file('HEARTBEAT.md',ceoHeartbeat);
+    // Division agents
+    const divMap={d1:'div1',d2:'div2',d3:'div3',d4:'div4',d5:'div5',d6:'div6'};
+    Object.entries(T.generated).forEach(([id,files])=>{
+      const agentName=(T.agents[id]?.name||DIVISION_PROFILES[id].defaultName).toLowerCase().replace(/\s+/g,'-');
+      const dir=root.folder(`AGENTS/${divMap[id]}-${agentName}`);
+      dir.file('SOUL.md',files.soul);
+      dir.file('IDENTITY.md',files.identity);
+      dir.file('AGENTS.md',files.agents);
+      dir.file('MEMORY.md',files.memory);
+      dir.file('SAFETY.md',files.safety);
+      dir.file('HEARTBEAT.md',files.heartbeat);
+    });
+    // System files
+    root.file('CLAUDE.md',claudeMd);
+    root.file('START.md',startMd);
+    const blob=await zip.generateAsync({type:'blob'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download=folderName+'.zip';a.click();
+    URL.revokeObjectURL(url);
+  }catch(e){console.error(e);alert('Download failed. Please try again.');}
+}
+
+async function doDownload(){
+  const email=document.getElementById('gate-email').value;
+  if(!email){alert('Please enter your email');return;}
+  const soul=buildSOUL();
+  const identity=buildIDENTITY();
+  const agents=buildAGENTS();
+  const memory=buildMEMORY();
+  const safety=buildSAFETY();
+  const heartbeat=buildHEARTBEAT();
+  const folder=(S.agentName||'my-agent').toLowerCase().replace(/\s+/g,'-');
+  try{
+    const zip=new JSZip();
+    const dir=zip.folder(folder);
+    dir.file('SOUL.md',soul);
+    dir.file('IDENTITY.md',identity);
+    dir.file('AGENTS.md',agents);
+    dir.file('MEMORY.md',memory);
+    dir.file('SAFETY.md',safety);
+    dir.file('HEARTBEAT.md',heartbeat);
+    const blob=await zip.generateAsync({type:'blob'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download=folder+'.zip';a.click();
+    URL.revokeObjectURL(url);
+  }catch(e){
+    // fallback: download SOUL only
+    const blob=new Blob([soul],{type:'text/markdown'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download='SOUL.md';a.click();
+    URL.revokeObjectURL(url);
+  }
+}
+
+/* ════ RESIZER ════ */
+(function(){
+  const resizer=document.getElementById('resizer');
+  const preview=document.getElementById('preview');
+  const layout=document.querySelector('.sb-layout');
+  let dragging=false,startX=0,startW=0;
+  resizer.addEventListener('mousedown',e=>{
+    dragging=true;startX=e.clientX;startW=preview.offsetWidth;
+    resizer.classList.add('dragging');
+    document.body.style.cursor='col-resize';document.body.style.userSelect='none';
+  });
+  document.addEventListener('mousemove',e=>{
+    if(!dragging)return;
+    const dx=startX-e.clientX;
+    const nw=Math.min(600,Math.max(220,startW+dx));
+    preview.style.width=nw+'px';
+  });
+  document.addEventListener('mouseup',()=>{
+    dragging=false;resizer.classList.remove('dragging');
+    document.body.style.cursor='';document.body.style.userSelect='';
+  });
+})();
+
+/* ════ INIT ════ */
+document.addEventListener('DOMContentLoaded',()=>{
+  buildBeliefPool();
+  buildThinkCards();
+  buildVoicePool();
+  buildDynamicCards();
+  buildTitleCards();
+  buildDivisionCards();
+  buildWorkflowCards();
+  buildWorkstyleCards();
+  buildTrustCards();
+  updatePreview();
+  const slug=window.location.hash.replace('#/','').trim()||'start';
+  showScreen(slug);
+});
+</script>
+</body>
+</html>
