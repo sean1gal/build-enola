@@ -924,6 +924,113 @@ ul { list-style: none; }
 }
 
 /* ============================================================
+   250 YEARS — STATS
+============================================================ */
+
+.cy-body--spaced {
+  margin-top: 40px;
+}
+
+.cy-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 36px 0 16px;
+}
+
+.cy-stat-card {
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 28px 24px;
+}
+
+.cy-stat-num {
+  display: block;
+  font-family: var(--font-ed);
+  font-size: clamp(40px, 6vw, 56px);
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+}
+
+.cy-stat-desc {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+.cy-stat-source {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-bottom: 0;
+}
+
+/* ============================================================
+   250 YEARS — TIMELINE
+============================================================ */
+
+.cy-research-timeline {
+  margin-top: 48px;
+  position: relative;
+  padding-left: 0;
+}
+
+.cy-research-entry {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 32px;
+  padding: 32px 0;
+  border-top: 1px solid var(--border);
+}
+.cy-research-entry:last-child {
+  border-bottom: 1px solid var(--border);
+}
+
+.cy-research-year {
+  font-family: var(--font-ed);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent);
+  opacity: 0.7;
+  padding-top: 2px;
+  flex-shrink: 0;
+}
+
+.cy-research-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cy-research-name {
+  font-family: var(--font-ed);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.cy-research-work {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-bottom: 8px;
+}
+
+.cy-research-finding {
+  font-size: 15px;
+  color: var(--text-dim);
+  line-height: 1.7;
+  max-width: 600px;
+}
+
+/* ============================================================
    CTA TIERS
 ============================================================ */
 
@@ -1138,6 +1245,13 @@ ul { list-style: none; }
     padding-top: 8px;
     border-top: 1px solid var(--border);
     margin-top: 4px;
+  }
+  .cy-stats-grid {
+    grid-template-columns: 1fr;
+  }
+  .cy-research-entry {
+    grid-template-columns: 60px 1fr;
+    gap: 20px;
   }
   .cy-tier-grid {
     grid-template-columns: 1fr;
