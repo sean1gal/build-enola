@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Seven Operating System: How It Works</title>
+  <meta name="description" content="Seven functions. Every business runs on them. Most run four. This page shows you the complete Seven Operating System, free." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://build.enolarevenu.com/the-seven-os" />
+  <meta property="og:title" content="The Seven Operating System: How It Works" />
+  <meta property="og:description" content="Seven functions. Every business runs on them. Most run four. This page shows you the complete Seven Operating System, free." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://build.enolarevenu.com/the-seven-os" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The Seven Operating System: How It Works",
+    "author": { "@type": "Person", "name": "Sean Gal" },
+    "publisher": { "@type": "Organization", "name": "Build Enola", "url": "https://build.enolarevenu.com" },
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://build.enolarevenu.com/the-seven-os" }
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
+  <link rel="stylesheet" href="the-seven-os.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="cy-nav">
+    <div class="cy-nav-inner">
+      <a href="index.html" class="cy-nav-brand">
+        <i class="ph-bold ph-arrow-left"></i>
+        Build Enola
+      </a>
+      <a href="checkout.html" class="btn-primary cy-nav-cta">Build the team &middot; <span data-price="build">$49</span></a>
+    </div>
+  </nav>
+
+  <!-- ============================================================
+       HERO
+  ============================================================ -->
+  <header class="cy-hero-split">
+    <div class="cy-hero-inner">
+
+      <div class="cy-hero-copy">
+        <span class="cy-eyebrow">The Seven Operating System</span>
+        <h1 class="cy-headline">Seven functions.<br>One system.<br>Most businesses<br>are running four.</h1>
+        <p class="cy-intro">Every business runs on the same seven functions. Most run three of them well. The other four happen by accident, or not at all.</p>
+        <p class="cy-intro-sub">This page shows you the full system, one agent at a time. What each one does, what breaks without them, and how they hand off to each other.</p>
+        <div class="cy-hero-actions">
+          <a href="#the-agents" class="btn-primary">See the system</a>
+          <a href="index.html" class="btn-ghost">Get the system</a>
+        </div>
+      </div>
+
+      <!-- Sequential flow diagram -->
+      <div class="cy-hero-vis" aria-hidden="true">
+        <div class="cy-flow-diagram" id="org-diagram">
+
+          <div class="cy-flow-ceo-bar">
+            <span class="cy-flow-ceo-num">07</span>
+            <div class="cy-flow-ceo-info">
+              <span class="cy-flow-ceo-name">CEO &middot; Enola</span>
+              <span class="cy-flow-ceo-role">Orchestrates every cycle</span>
+            </div>
+            <i class="ph-bold ph-infinity cy-flow-ceo-icon"></i>
+          </div>
+
+          <div class="cy-flow-seq">
+
+            <div class="cy-flow-step" style="--si:1">
+              <div class="cy-flow-step-dot"></div>
+              <div class="cy-flow-step-node">
+                <span class="cy-flow-step-num">01</span>
+                <span class="cy-flow-step-name">Speaker</span>
+                <span class="cy-flow-step-role">CCO</span>
+              </div>
+            </div>
+
+            <div class="cy-flow-step" style="--si:2">
+              <div class="cy-flow-step-dot"></div>
+              <div class="cy-flow-step-node">
+                <span class="cy-flow-step-num">02</span>
+                <span class="cy-flow-step-name">Writer</span>
+                <span class="cy-flow-step-role">CMO</span>
+              </div>
+              <div class="cy-flow-loop-tag cy-flow-loop-tag--growth">
+                <i class="ph-bold ph-arrow-u-up-left"></i> growth feeds here
+              </div>
+            </div>
+
+            <div class="cy-flow-step" style="--si:3">
+              <div class="cy-flow-step-dot"></div>
+              <div class="cy-flow-step-node">
+                <span class="cy-flow-step-num">03</span>
+                <span class="cy-flow-step-name">Risk Manager</span>
+                <span class="cy-flow-step-role">CFO</span>
+              </div>
+            </div>
+
+            <div class="cy-flow-step" style="--si:4">
+              <div class="cy-flow-step-dot"></div>
+              <div class="cy-flow-step-node">
+                <span class="cy-flow-step-num">04</span>
+                <span class="cy-flow-step-name">Builder</span>
+                <span class="cy-flow-step-role">CTO</span>
+              </div>
+              <div class="cy-flow-loop-tag cy-flow-loop-tag--correction">
+                <i class="ph-bold ph-arrow-counter-clockwise"></i> 05 rejects here
+              </div>
+            </div>
+
+            <div class="cy-flow-step cy-flow-step--quality" style="--si:5">
+              <div class="cy-flow-step-dot cy-flow-step-dot--quality"></div>
+              <div class="cy-flow-step-node cy-flow-step-node--quality">
+                <span class="cy-flow-step-num cy-flow-step-num--quality">05</span>
+                <span class="cy-flow-step-name">Gatekeeper</span>
+                <span class="cy-flow-step-role">COO</span>
+              </div>
+            </div>
+
+            <div class="cy-flow-step" style="--si:6">
+              <div class="cy-flow-step-dot"></div>
+              <div class="cy-flow-step-node">
+                <span class="cy-flow-step-num">06</span>
+                <span class="cy-flow-step-name">Salesman</span>
+                <span class="cy-flow-step-role">CSO</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="cy-flow-reset">
+            <i class="ph-bold ph-arrow-arc-right cy-flow-reset-icon"></i>
+            <span class="cy-flow-reset-label">Resets through CEO &middot; Higher cycle begins</span>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ============================================================
+         THE MACHINE
+    ============================================================ -->
+    <section class="cy-section">
+      <div class="cy-section-inner">
+        <span class="cy-eyebrow">The idea behind it</span>
+        <h2 class="cy-section-headline">Every business is a machine.<br>Here is what jams it.</h2>
+        <p class="cy-section-intro">Most people think an organization is people doing things together. It isn't. It's a machine. Work enters it, moves through it, gets changed at each station, and comes out the other side as a product. When it jams, the cause is always one of three things.</p>
+
+        <div class="cy-laws">
+          <div class="cy-law-card">
+            <span class="cy-law-icon"><i class="ph-bold ph-cube"></i></span>
+            <h3>Station</h3>
+            <p>Any post, person, or agent that receives work, does something to it, and passes it forward. Give it a clear job and it runs. Don't, and it jams everything upstream.</p>
+          </div>
+          <div class="cy-law-card">
+            <span class="cy-law-icon"><i class="ph-bold ph-arrows-horizontal"></i></span>
+            <h3>Channel</h3>
+            <p>The route work travels from one agent to the next. If the route isn't clear, the work doesn't move. It sits. Then you move it, because nobody else knows where it goes.</p>
+          </div>
+          <div class="cy-law-card">
+            <span class="cy-law-icon"><i class="ph-bold ph-circles-three"></i></span>
+            <h3>Unit</h3>
+            <p>Anything the system handles. A message, a deal, a draft, a decision. Every one needs three things: where it enters, where it goes, and what it looks like when it's done.</p>
+          </div>
+        </div>
+
+        <blockquote class="cy-quote">
+          <p>Every problem in every organization comes back to one of those three things. Missing station. Broken channel. Misrouted unit. Find the one that applies. Fix it. The problem goes away.</p>
+        </blockquote>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         THE 7 AGENTS — intro
+    ============================================================ -->
+    <section class="cy-section cy-section--tinted" id="the-agents">
+      <div class="cy-section-inner">
+        <span class="cy-eyebrow">The seven agents</span>
+        <h2 class="cy-section-headline">One function. One agent.<br>No one covers for anyone else.</h2>
+        <p class="cy-section-intro">Each agent owns one step. Knows what comes in. Knows what to do with it. Knows where it goes next. Nobody self-approves. Nothing routes through you. That is the whole point.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         AGENT 01: SPEAKER (CCO)
+    ============================================================ -->
+    <section class="agent-section" id="agent-01">
+      <div class="agent-section-inner">
+
+        <div class="cy-agent-strip">
+          <span class="cy-agent-strip-node cy-agent-strip-node--active">01</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node">02</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node">03</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node">04</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node">05</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node">06</span>
+          <span class="cy-agent-strip-sep cy-agent-strip-sep--ceo" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node cy-agent-strip-node--ceo">07</span>
+        </div>
+
+        <div class="agent-layout">
+          <div class="agent-layout-id">
+            <div class="agent-big-num">01</div>
+            <h3 class="agent-name">The Speaker</h3>
+            <span class="agent-title">CCO &middot; Communications</span>
+            <div class="agent-vfp">
+              <span class="agent-vfp-label">Output</span>
+              <p class="agent-vfp-text">An established organization with productive personnel on post</p>
+            </div>
+          </div>
+          <div class="agent-layout-body">
+            <p class="agent-desc">Every message in. Every message out. Anything that isn't hers gets routed to whoever owns it. Anything risky goes to Enola before it goes anywhere else. She is the first thing people touch. And the last.</p>
+            <div class="agent-missing">
+              <span class="agent-missing-label">Without this agent</span>
+              <p>"You're good at what you do. Nobody knows you exist. Opportunities disappear into an unmonitored inbox."</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         AGENT 02: WRITER (CMO)
+    ============================================================ -->
+    <section class="agent-section agent-section--tinted" id="agent-02">
+      <div class="agent-section-inner">
+
+        <div class="cy-agent-strip">
+          <span class="cy-agent-strip-node">01</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node cy-agent-strip-node--active">02</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node">03</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node">04</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node">05</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node">06</span>
+          <span class="cy-agent-strip-sep cy-agent-strip-sep--ceo" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node cy-agent-strip-node--ceo">07</span>
+        </div>
+
+        <div class="agent-layout">
+          <div class="agent-layout-id">
+            <div class="agent-big-num">02</div>
+            <h3 class="agent-name">The Writer</h3>
+            <span class="agent-title">CMO &middot; Marketing</span>
+            <div class="agent-vfp">
+              <span class="agent-vfp-label">Output</span>
+              <p class="agent-vfp-text">Sufficient sales volume to ensure income exceeds outgo, plus reserves</p>
+            </div>
+          </div>
+          <div class="agent-layout-body">
+            <p class="agent-desc">She builds the audience before the sale. By the time the Salesman shows up, people already know who you are. She does not ship anything herself. Everything goes to the Gatekeeper first.</p>
+            <div class="agent-missing">
+              <span class="agent-missing-label">Without this agent</span>
+              <p>"Every sale starts cold. No audience, no trust, no warm leads. Growth depends entirely on referrals and luck."</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         AGENT 03: RISK MANAGER (CFO)
+    ============================================================ -->
+    <section class="agent-section" id="agent-03">
+      <div class="agent-section-inner">
+
+        <div class="cy-agent-strip">
+          <span class="cy-agent-strip-node">01</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node">02</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node cy-agent-strip-node--active">03</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node">04</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node">05</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node">06</span>
+          <span class="cy-agent-strip-sep cy-agent-strip-sep--ceo" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node cy-agent-strip-node--ceo">07</span>
+        </div>
+
+        <div class="agent-layout">
+          <div class="agent-layout-id">
+            <div class="agent-big-num">03</div>
+            <h3 class="agent-name">The Risk Manager</h3>
+            <span class="agent-title">CFO &middot; Finance</span>
+            <div class="agent-vfp">
+              <span class="agent-vfp-label">Output</span>
+              <p class="agent-vfp-text">Preserved and growing assets and reserves</p>
+            </div>
+          </div>
+          <div class="agent-layout-body">
+            <p class="agent-desc">He watches the numbers so you don't have to. Every deal the Salesman wants to close goes through him first. If the pricing is wrong, he flags it before the commitment is made. Not after.</p>
+            <div class="agent-missing">
+              <span class="agent-missing-label">Without this agent</span>
+              <p>"Revenue comes in but never stacks. Decisions are made on feel. The business is busy but not building anything."</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         AGENT 04: BUILDER (CTO)
+    ============================================================ -->
+    <section class="agent-section agent-section--tinted" id="agent-04">
+      <div class="agent-section-inner">
+
+        <div class="cy-agent-strip">
+          <span class="cy-agent-strip-node">01</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node">02</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node">03</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node cy-agent-strip-node--active">04</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node">05</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node">06</span>
+          <span class="cy-agent-strip-sep cy-agent-strip-sep--ceo" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node cy-agent-strip-node--ceo">07</span>
+        </div>
+
+        <div class="agent-layout">
+          <div class="agent-layout-id">
+            <div class="agent-big-num">04</div>
+            <h3 class="agent-name">The Builder</h3>
+            <span class="agent-title">CTO &middot; Technology</span>
+            <div class="agent-vfp">
+              <span class="agent-vfp-label">Output</span>
+              <p class="agent-vfp-text">High quantity of products delivered with promised quality, cost, and timeline</p>
+            </div>
+          </div>
+          <div class="agent-layout-body">
+            <p class="agent-desc">Give him a brief. He builds. The only one in the system judged by what ships, not what was planned. Every build goes to the Gatekeeper before anything goes live.</p>
+            <div class="agent-missing">
+              <span class="agent-missing-label">Without this agent</span>
+              <p>"Ideas are there. Strategy is there. Nothing ships. Everything stays in planning mode permanently."</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         AGENT 05: GATEKEEPER (COO)
+    ============================================================ -->
+    <section class="agent-section agent-section--quality" id="agent-05">
+      <div class="agent-section-inner">
+
+        <div class="cy-agent-strip">
+          <span class="cy-agent-strip-node">01</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node">02</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node">03</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node">04</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node cy-agent-strip-node--active cy-agent-strip-node--gate">05</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node">06</span>
+          <span class="cy-agent-strip-sep cy-agent-strip-sep--ceo" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node cy-agent-strip-node--ceo">07</span>
+        </div>
+
+        <div class="agent-layout">
+          <div class="agent-layout-id">
+            <div class="agent-big-num agent-big-num--quality">05</div>
+            <h3 class="agent-name">The Gatekeeper</h3>
+            <span class="agent-title">COO &middot; Operations</span>
+            <div class="agent-vfp">
+              <span class="agent-vfp-label">Output</span>
+              <p class="agent-vfp-text">Well-trained personnel and a corrected organization that produces consistently excellent output</p>
+            </div>
+          </div>
+          <div class="agent-layout-body">
+            <p class="agent-desc">Everything stops here before it leaves. She approves it or rejects it with a specific fix. Not "needs work." An exact instruction. Rejections go back to whoever made it. Not to you.</p>
+            <div class="agent-missing">
+              <span class="agent-missing-label">Without this agent</span>
+              <p>"Things ship but come back with problems. The same mistakes happen twice. Quality is inconsistent. Scale becomes impossible."</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         AGENT 06: SALESMAN (CSO)
+    ============================================================ -->
+    <section class="agent-section agent-section--tinted" id="agent-06">
+      <div class="agent-section-inner">
+
+        <div class="cy-agent-strip">
+          <span class="cy-agent-strip-node">01</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node">02</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node">03</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node">04</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node">05</span>
+          <span class="cy-agent-strip-sep" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node cy-agent-strip-node--active">06</span>
+          <span class="cy-agent-strip-sep cy-agent-strip-sep--ceo" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node cy-agent-strip-node--ceo">07</span>
+        </div>
+
+        <div class="agent-layout">
+          <div class="agent-layout-id">
+            <div class="agent-big-num">06</div>
+            <h3 class="agent-name">The Salesman</h3>
+            <span class="agent-title">CSO &middot; Sales</span>
+            <div class="agent-vfp">
+              <span class="agent-vfp-label">Output</span>
+              <p class="agent-vfp-text">The expansion of the organization's reach and self-sustaining growth loops</p>
+            </div>
+          </div>
+          <div class="agent-layout-body">
+            <p class="agent-desc">He takes the warm audience the Writer built and closes them. Every price goes through the Risk Manager before he commits to anything. Revenue lands here. That is what resets the cycle.</p>
+            <div class="agent-missing">
+              <span class="agent-missing-label">Without this agent</span>
+              <p>"The pipeline fills but deals don't close. Good products die in the consideration phase. No one asked for the decision."</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         AGENT 07: CEO (Enola)
+    ============================================================ -->
+    <section class="agent-section agent-section--exec" id="agent-07">
+      <div class="agent-section-inner">
+
+        <div class="cy-agent-strip cy-agent-strip--dark">
+          <span class="cy-agent-strip-node cy-agent-strip-node--dark">01</span>
+          <span class="cy-agent-strip-sep cy-agent-strip-sep--dark" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node cy-agent-strip-node--dark">02</span>
+          <span class="cy-agent-strip-sep cy-agent-strip-sep--dark" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node cy-agent-strip-node--dark">03</span>
+          <span class="cy-agent-strip-sep cy-agent-strip-sep--dark" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node cy-agent-strip-node--dark">04</span>
+          <span class="cy-agent-strip-sep cy-agent-strip-sep--dark" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node cy-agent-strip-node--dark">05</span>
+          <span class="cy-agent-strip-sep cy-agent-strip-sep--dark" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node cy-agent-strip-node--dark">06</span>
+          <span class="cy-agent-strip-sep cy-agent-strip-sep--ceo cy-agent-strip-sep--dark" aria-hidden="true"></span>
+          <span class="cy-agent-strip-node cy-agent-strip-node--active cy-agent-strip-node--ceo cy-agent-strip-node--ceo-active">07</span>
+        </div>
+
+        <div class="agent-layout">
+          <div class="agent-layout-id">
+            <div class="agent-big-num agent-big-num--exec">07</div>
+            <h3 class="agent-name agent-name--exec">The CEO</h3>
+            <span class="agent-title agent-title--exec">Enola &middot; Executive</span>
+            <div class="agent-vfp agent-vfp--exec">
+              <span class="agent-vfp-label">Output</span>
+              <p class="agent-vfp-text">A solvent, viable, and growing organization</p>
+            </div>
+          </div>
+          <div class="agent-layout-body">
+            <p class="agent-desc agent-desc--exec">She does not run the production. She runs the system that runs the production. The calls nobody else can make. The conflicts nobody else can resolve. Every cycle resets through her, one level higher than it started.</p>
+            <div class="agent-missing agent-missing--exec">
+              <span class="agent-missing-label">Without this agent</span>
+              <p>"Everyone is working hard. The business is not going anywhere specific. Activity everywhere. Direction nowhere."</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         THE HANDOFF RULES
+    ============================================================ -->
+    <section class="cy-section" id="the-handoffs">
+      <div class="cy-section-inner">
+        <span class="cy-eyebrow">How work moves between agents</span>
+        <h2 class="cy-section-headline">Six approved handoffs.<br>Everything else routes to the CEO.</h2>
+        <p class="cy-section-intro">Nobody routes through you. Work moves directly between agents on pre-defined lines. These are the six approved handoffs. Anything outside this list goes to Enola first.</p>
+
+        <div class="handoff-grid">
+
+          <div class="handoff-row">
+            <div class="handoff-from">
+              <span class="handoff-num">02</span>
+              <span class="handoff-name">Writer</span>
+            </div>
+            <div class="handoff-arrow"><i class="ph-bold ph-arrow-right"></i></div>
+            <div class="handoff-to">
+              <span class="handoff-num handoff-num--quality">05</span>
+              <span class="handoff-name">Gatekeeper</span>
+            </div>
+            <p class="handoff-rule">Always. All copy goes to Operations for review before it ships. No exceptions.</p>
+          </div>
+
+          <div class="handoff-row">
+            <div class="handoff-from">
+              <span class="handoff-num">04</span>
+              <span class="handoff-name">Builder</span>
+            </div>
+            <div class="handoff-arrow"><i class="ph-bold ph-arrow-right"></i></div>
+            <div class="handoff-to">
+              <span class="handoff-num handoff-num--quality">05</span>
+              <span class="handoff-name">Gatekeeper</span>
+            </div>
+            <p class="handoff-rule">Always. All built systems go to Operations for sign-off before going live.</p>
+          </div>
+
+          <div class="handoff-row">
+            <div class="handoff-from">
+              <span class="handoff-num">06</span>
+              <span class="handoff-name">Salesman</span>
+            </div>
+            <div class="handoff-arrow"><i class="ph-bold ph-arrow-right"></i></div>
+            <div class="handoff-to">
+              <span class="handoff-num">03</span>
+              <span class="handoff-name">Risk Manager</span>
+            </div>
+            <p class="handoff-rule">All deal pricing is validated by Finance before Sales commits to a number.</p>
+          </div>
+
+          <div class="handoff-row">
+            <div class="handoff-from">
+              <span class="handoff-num handoff-num--quality">05</span>
+              <span class="handoff-name">Gatekeeper</span>
+            </div>
+            <div class="handoff-arrow handoff-arrow--rejection"><i class="ph-bold ph-arrow-counter-clockwise"></i></div>
+            <div class="handoff-to">
+              <span class="handoff-num">02/04</span>
+              <span class="handoff-name">Originating agent</span>
+            </div>
+            <p class="handoff-rule">On rejection: specific correction goes back directly to the agent who produced the work.</p>
+          </div>
+
+          <div class="handoff-row">
+            <div class="handoff-from">
+              <span class="handoff-num">01</span>
+              <span class="handoff-name">Speaker</span>
+            </div>
+            <div class="handoff-arrow handoff-arrow--escalate"><i class="ph-bold ph-arrow-up"></i></div>
+            <div class="handoff-to">
+              <span class="handoff-num handoff-num--exec">07</span>
+              <span class="handoff-name">CEO</span>
+            </div>
+            <p class="handoff-rule">Any message with legal, reputational, or commitment risk escalates to the CEO before sending.</p>
+          </div>
+
+          <div class="handoff-row">
+            <div class="handoff-from">
+              <span class="handoff-num">Any</span>
+              <span class="handoff-name">Any agent</span>
+            </div>
+            <div class="handoff-arrow handoff-arrow--escalate"><i class="ph-bold ph-arrow-up"></i></div>
+            <div class="handoff-to">
+              <span class="handoff-num handoff-num--exec">07</span>
+              <span class="handoff-name">CEO</span>
+            </div>
+            <p class="handoff-rule">Anything that cannot be undone routes to the CEO for approval first. Speed is not authorization.</p>
+          </div>
+
+        </div>
+
+        <blockquote class="cy-quote" style="margin-top:48px;">
+          <p>The CEO is not a relay point for routine work. She sets direction and handles exceptions. Agents that bypass the direct handoff matrix and route routine work through the CEO are creating unnecessary traffic. Fix the routing.</p>
+        </blockquote>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         THE SPIRAL
+    ============================================================ -->
+    <section class="cy-section cy-section--dark" id="the-spiral">
+      <div class="cy-section-inner">
+        <span class="cy-eyebrow" style="color:var(--accent);">The compounding effect</span>
+        <h2 class="cy-section-headline cy-section-headline--light">Not a circle. A spiral.<br>Every cycle starts higher than the last.</h2>
+
+        <p class="cy-body cy-body--light">A circle returns you to the same place. A spiral returns you to the same position, but higher.</p>
+
+        <p class="cy-body cy-body--light">Each completed cycle produces more than the last: more customers, more capability, more data, more trust. The CEO sits above the sequence, not in it. When a cycle completes, the next one starts from a higher floor.</p>
+
+        <div class="spiral-visual">
+          <div class="spiral-cycle spiral-cycle--1">
+            <span class="spiral-label">Cycle 1</span>
+            <div class="spiral-agents">
+              <span>01</span><span>02</span><span>03</span><span>04</span><span>05</span><span>06</span>
+            </div>
+            <span class="spiral-output">Output &rarr; $1,000/mo</span>
+          </div>
+          <div class="spiral-connector">
+            <i class="ph-bold ph-arrow-up"></i>
+            <span>Each cycle outputs more</span>
+          </div>
+          <div class="spiral-cycle spiral-cycle--2">
+            <span class="spiral-label">Cycle 2</span>
+            <div class="spiral-agents">
+              <span>01</span><span>02</span><span>03</span><span>04</span><span>05</span><span>06</span>
+            </div>
+            <span class="spiral-output">Output &rarr; $4,000/mo</span>
+          </div>
+          <div class="spiral-connector">
+            <i class="ph-bold ph-arrow-up"></i>
+            <span>Same steps, more capacity</span>
+          </div>
+          <div class="spiral-cycle spiral-cycle--3">
+            <span class="spiral-label">Cycle 3</span>
+            <div class="spiral-agents">
+              <span>01</span><span>02</span><span>03</span><span>04</span><span>05</span><span>06</span>
+            </div>
+            <span class="spiral-output">Output &rarr; $12,000/mo</span>
+          </div>
+        </div>
+
+        <div class="spiral-note">
+          <i class="ph-bold ph-infinity"></i>
+          <p>The CEO (Agent 07) coordinates each cycle from above, then resets the next one from a higher starting point. This is what compound growth actually looks like. Not luck. Not random expansion. An ascending repetition of the same 7 functions, each time with more fuel than before.</p>
+        </div>
+
+        <p class="cy-body cy-body--light" style="margin-top:40px;">This is also why fixing a broken step compounds. Close one gap in your cycle and every future cycle runs on more capacity. The fix does not just solve the current problem. It raises the floor for everything that follows.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         CTA
+    ============================================================ -->
+    <section class="cy-section" id="build-the-team">
+      <div class="cy-section-inner">
+        <span class="cy-eyebrow">Build your system</span>
+        <h2 class="cy-section-headline">You just read the system.<br>Now you can own it.</h2>
+        <p class="cy-section-intro">This is the system, pre-built. Seven agents. Every role covered. Runs in Claude Code. Setup in under an hour. You just described it to yourself on this page. Now you can own it.</p>
+
+        <div class="cy-tier-grid">
+
+          <div class="cy-tier-card">
+            <span class="cy-tier-badge">Team Builder included</span>
+            <div class="cy-tier-price-wrap">
+              <span class="cy-tier-price-was">$79</span>
+              <span class="cy-tier-price" data-price="build">$49</span>
+            </div>
+            <strong class="cy-tier-name">Build Your Own</strong>
+            <p class="cy-tier-desc">Use the Team Builder to design each agent: character, scope, memory, and rules. Download the complete system and run it in Claude Code. You own everything you build.</p>
+            <ul class="cy-tier-features">
+              <li>Team Builder: guided agent designer</li>
+              <li>7 agents with 6 files each</li>
+              <li>Memory system included</li>
+              <li>Skills library included</li>
+              <li>Live stats dashboard included</li>
+              <li>Setup guide included</li>
+            </ul>
+            <a href="checkout.html" class="btn-primary cy-tier-btn">Build the team &middot; <span data-price="build">$49</span></a>
+          </div>
+
+          <div class="cy-tier-card cy-tier-card--accent">
+            <span class="cy-tier-price" data-price="proven">$129</span>
+            <strong class="cy-tier-name">Proven Systems</strong>
+            <p class="cy-tier-desc">The complete system, already built and running in a real business. Pick your industry. Every agent pre-configured, tested in live situations before it ships.</p>
+            <ul class="cy-tier-features">
+              <li>Full 7-agent system, pre-configured</li>
+              <li>Tested in real business situations</li>
+              <li>Every agent carries multiple roles</li>
+              <li>Live stats dashboard included</li>
+              <li>New industries added as testing completes</li>
+            </ul>
+            <button class="btn-primary cy-tier-btn" onclick="openSpecialistModal()">Get access &middot; <span data-price="proven">$129</span></button>
+          </div>
+
+        </div>
+
+        <p class="cy-cta-trust">One payment. No subscription. Runs in Claude Code. Free to download. No code required.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Specialist modal -->
+  <div id="specialist-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:900;align-items:center;justify-content:center;padding:20px;">
+    <div style="background:#FAF7F2;border-radius:14px;padding:36px 40px;max-width:460px;width:100%;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.2);">
+      <button onclick="closeSpecialistModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;color:#A8978C;cursor:pointer;">&#x2715;</button>
+      <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#B85C38;margin-bottom:12px;">Proven Systems &middot; <span data-price="proven">$129</span></div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;line-height:1.2;margin-bottom:12px;">Still running in the real world.</h2>
+      <p style="font-size:15px;color:#6B5A50;line-height:1.65;margin-bottom:8px;">These are complete systems, already built and running in real businesses. Not templates. Not prototypes.</p>
+      <p style="font-size:15px;color:#6B5A50;line-height:1.65;margin-bottom:20px;">We are still running them in live situations before we call them final. You get access at the founding price. Updates ship as testing completes.</p>
+      <a href="checkout.html?tier=field" style="display:block;text-align:center;font-family:'Inter',sans-serif;font-size:15px;font-weight:600;padding:13px 24px;border-radius:8px;border:none;background:#B85C38;color:#fff;cursor:pointer;text-decoration:none;">I understand, get me access &middot; <span data-price="proven">$129</span></a>
+      <p style="font-size:12px;color:#A8978C;margin-top:16px;text-align:center;">One payment. No subscription.</p>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="cy-footer">
+    <div class="cy-footer-inner">
+      <p>The Seven Operating System is the organizational model behind Build Enola. Seven agents, each with a role, a defined output, and a fixed place in the sequence. The model is built on observable principles of production that apply to any business, any size, any industry.</p>
+      <p class="cy-footer-copy">&copy; Sean Gal | <a href="https://enolarevenu.com">enolarevenu.com</a></p>
+    </div>
+  </footer>
+
+  <script src="prices.js"></script>
+  <script src="the-seven-os.js"></script>
+  <script>
+    function openSpecialistModal() {
+      document.getElementById('specialist-overlay').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+    function closeSpecialistModal() {
+      document.getElementById('specialist-overlay').style.display = 'none';
+      document.body.style.overflow = '';
+    }
+    document.getElementById('specialist-overlay').addEventListener('click', function(e) {
+      if (e.target === this) closeSpecialistModal();
+    });
+  </script>
+
+</body>
+</html>

@@ -109,8 +109,8 @@ function initCountdown() {
     const diff = deadline - now;
 
     if (diff <= 0) {
-      timer.textContent = 'price now $79';
-      timer.classList.add('is-expired');
+      const bar = timer.closest('.countdown-bar');
+      if (bar) bar.style.display = 'none';
       return;
     }
 
